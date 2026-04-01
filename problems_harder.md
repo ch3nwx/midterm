@@ -4,16 +4,26 @@
 
 ## Problem 1 — GCD+
 
-You are given $T$ test cases. In each test case, you are given $K$ positive integers. Compute both the **GCD** (greatest common divisor) and the **LCM** (least common multiple) of all $K$ numbers.
+You are given $T$ test cases. In each test case you receive $K$ positive integers. Compute both the **GCD** (greatest common divisor) and the **LCM** (least common multiple) of all $K$ numbers.
 
 ### Input
 
-- Line 1: integer $T$ ($1 \leq T \leq 100000$) — number of test cases.
-- Each test case occupies one line: first an integer $K$ ($2 \leq K \leq 20$), followed by $K$ positive integers, each up to $10^{18}$.
+- Line 1: integer $T$ ($1 \leq T \leq 100\,000$) — number of test cases.
+- Each test case: one line starting with $K$ ($2 \leq K \leq 20$), followed by $K$ positive integers each up to $10^{18}$.
 
 ### Output
 
-For each test case, output two space-separated integers on one line: the GCD and the LCM of all $K$ numbers. If the LCM exceeds $10^{18}$, output `overflow` instead of the LCM value.
+For each test case, output two space-separated values: the GCD and the LCM. If the LCM exceeds $10^{18}$, output `overflow` in place of the LCM.
+
+### Subtasks
+
+| Subtask | Points | Constraints |
+|---------|--------|-------------|
+| 1 | 20 | $T \leq 100$, $K = 2$, all values $\leq 10^6$ |
+| 2 | 20 | $T \leq 1000$, $K = 2$, values $\leq 10^{18}$; LCM never overflows |
+| 3 | 20 | $T \leq 10^4$, $K \leq 10$, values $\leq 10^{18}$; LCM may overflow |
+| 4 | 20 | $T \leq 10^5$, $K \leq 20$, full constraints |
+| 5 | 20 | Same as subtask 4 but time-tight; requires $O(K \log V)$ per test case |
 
 ### Sample Input
 
@@ -38,30 +48,37 @@ For each test case, output two space-separated integers on one line: the GCD and
 
 ## Problem 2 — Table Management System ver.3
 
-Hodilo restaurant's queuing system needs an upgrade. The rules are the same as before, but now guests who cannot be immediately seated are placed in a **FIFO waitlist**. Each time a guest leaves (freeing a table), the system immediately checks the front of the waitlist and seats them if a suitable table is now available.
+Same restaurant simulation as before, but now guests who cannot be immediately seated are placed in a **FIFO waitlist**. Each time a table frees up, the system immediately and repeatedly tries to seat the front of the waitlist until no more guests can be placed. Guests may also **cancel** their wait before being seated.
 
-Additionally, guests may cancel their wait. A cancellation removes that guest from the waitlist entirely (they never get seated). A guest who is already seated cannot cancel.
+Simulation runs from minute 660 to minute 900. At each minute:
 
-You must implement the following functions in `function.h`:
-
-- `Table* createTable()` — same as before.
-- `Guest* createGuest()` — now also reads a possible `cancel_time` per guest (the minute at which they cancel their wait, or `-1` if they will not cancel).
-- `Guest* checkLeave(Table* tables, int tableCount, int currentTime)` — same semantics as before.
-- `int assignTable(Table* tables, int tableCount, Guest* guest)` — same semantics as before.
-- `void processWaitlist(Table* tables, int tableCount, Queue* waitlist, int currentTime)` — attempt to seat the front-of-queue guest; repeat as long as a guest at the front can be seated. Remove any guests from the front of the queue who have already cancelled.
+1. Check for departing guests — free their tables, then immediately attempt to seat waitlisted guests (front-first, repeatedly until no suitable table remains or the list is empty).
+2. Check if the next guest arrives. Try to seat them immediately; if no suitable table exists, add them to the back of the waitlist.
+3. Process any cancellations scheduled for this minute — remove those guests from the waitlist (they are never seated).
+4. Print table snapshot at minutes 660, 720, 780, 840, and 900.
 
 ### Input
 
-- Line 1: integer $N$ ($1 \leq N \leq 50$) — number of tables.
-- Line 2: $N$ integers $x_i$ ($1 \leq x_i \leq 4$) — table capacities.
-- Line 3: integer $M$ ($1 \leq M \leq 200$) — number of incoming guests.
-- Next $M$ lines: `guest_name` (at most 10 chars), `group_size` (1–4), `arrival_time` (660–900), `dining_time` (1–300), `cancel_time` (660–900 or `-1`). Arrival times are in non-decreasing order.
+- Line 1: $N$ ($1 \leq N \leq 50$) — tables.
+- Line 2: $N$ capacities $x_i$ ($1 \leq x_i \leq 4$).
+- Line 3: $M$ ($1 \leq M \leq 200$) — guests.
+- Next $M$ lines: `name` (≤ 10 chars), `group_size` (1–4), `arrival_time` (660–900), `dining_time` (1–300), `cancel_time` (660–900 or `-1` if they will not cancel). Arrival times are non-decreasing.
 
 ### Output
 
-Same format as the original problem, with these additions:
-- When a guest is seated from the waitlist: `hh:mm (minutes) -> guestName: enter (from waitlist)`
-- When a guest cancels: `hh:mm (minutes) -> guestName: cancel`
+Same format as the original problem, with additions:
+- Seated from waitlist: `hh:mm (min) -> name: enter (from waitlist)`
+- Guest cancels: `hh:mm (min) -> name: cancel`
+
+### Subtasks
+
+| Subtask | Points | Constraints |
+|---------|--------|-------------|
+| 1 | 20 | $N, M \leq 10$; no cancellations; waitlist always has at most 1 guest |
+| 2 | 20 | $N, M \leq 30$; no cancellations; multiple waitlisted guests |
+| 3 | 20 | $N, M \leq 50$; cancellations present; cancelled guest is always at the front of the list |
+| 4 | 20 | $N \leq 50$, $M \leq 100$; cancellations may target any position in the list |
+| 5 | 20 | $N \leq 50$, $M \leq 200$; full constraints |
 
 ### Sample Input
 
@@ -97,28 +114,38 @@ Dave 2 730 60 -1
 
 ## Problem 3 — Neural Link Node Repair II
 
-You are given $T$ neural link nodes. Each node is now represented as a **64-bit unsigned integer**. Apply the following four rules **in sequence** to each node and output the result.
+Same as the original, but each node is a **64-bit unsigned integer** with **four** rules.
 
 **Rule 1 — Overload Detection:**
-If any two consecutive bits are both 1 (i.e., `S & (S >> 1) != 0`), the node is overloaded. Output `0xFFFFFFFFFFFFFFFF` and skip the remaining rules.
+If `S & (S >> 1) != 0`, output `0xFFFFFFFFFFFFFFFF` and skip the rest.
 
 **Rule 2 — Neural Bridging:**
-Find the position of the highest set bit (MSB) and the lowest set bit (LSB) in $S$. Fill all bits between them (inclusive) with 1s. If $S = 0$, output `0x0000000000000000` and skip Rules 3 and 4.
+Fill all bits between MSB and LSB (inclusive) with 1s. If $S = 0$, output `0x0000000000000000` and skip Rules 3 and 4.
 
 **Rule 3 — Checksum Integration:**
-XOR all eight bytes of `bridge` together to produce a single checksum byte. Replace the lowest byte of `bridge` with this checksum.
+XOR all **eight** bytes of `bridge` into a checksum byte. Replace the lowest byte of `bridge` with this checksum.
 
 **Rule 4 — Rotation:**
-Count the number of set bits (popcount) in the result from Rule 3. Rotate the result **right** by that many bit positions (64-bit rotation).
+Count the set bits (popcount) of the Rule 3 result. Rotate the result **right** by that many positions (64-bit rotation).
 
 ### Input
 
-- Line 1: integer $T$ — number of test cases.
-- Next $T$ lines: each contains a 64-bit unsigned integer, given in **either** decimal or `0x`-prefixed hexadecimal format. You must handle both.
+- Line 1: integer $T$ — test cases.
+- Next $T$ lines: a 64-bit unsigned integer in either **decimal** or **`0x`-prefixed hexadecimal**.
 
 ### Output
 
-For each test case, output the result as a zero-padded 16-digit uppercase hexadecimal value with `0x` prefix (e.g., `0x0000000000000001`).
+Zero-padded 16-digit uppercase hex with `0x` prefix for each test case.
+
+### Subtasks
+
+| Subtask | Points | Constraints |
+|---------|--------|-------------|
+| 1 | 15 | All inputs trigger Rule 1 or are zero; only decimal input format |
+| 2 | 15 | No Rule 1 triggers; single set bit (MSB = LSB); only hex input |
+| 3 | 20 | Mix of all rules; only hex input; $T \leq 1000$ |
+| 4 | 25 | Mix of all rules; both decimal and hex input; $T \leq 10000$ |
+| 5 | 25 | Full constraints; $T \leq 100000$ |
 
 ### Sample Input
 
@@ -145,31 +172,39 @@ For each test case, output the result as a zero-padded 16-digit uppercase hexade
 
 ## Problem 4 — It Is Not Simple
 
-You are given an initial mysterious string and $q$ queries. The mysterious string format and the working string $S$ are defined the same way as in the original problem.
+Same mysterious string format and working string $S$, but with **four** query types.
 
-**Queries (four types):**
+**Queries:**
+- `Insert idx str` — decode `str` and insert into $S$ at position `idx`.
+- `Remove idx len` — delete `len` characters from $S$ starting at `idx`.
+- `Reverse idx1 idx2` — reverse the substring of $S$ from `idx1` to `idx2` (inclusive).
+- `Replace old new` — replace every non-overlapping occurrence of hex substring `old` in $S$ with `new` (left-to-right). `old` and `new` are plain hex strings (not mysterious format). `new` may be empty (deletion).
 
-- `Insert idx str` — Decode `str` into a hex string and insert it into $S$ at position `idx`.
-- `Remove idx len` — Delete `len` characters from $S$ starting at index `idx`.
-- `Reverse idx1 idx2` — Reverse the substring of $S$ from index `idx1` to `idx2` (inclusive).
-- `Replace old new` — Replace every non-overlapping occurrence of the hex substring `old` in $S$ with the hex substring `new`. Replacements are applied left-to-right. `old` and `new` are plain hexadecimal strings (not mysterious-string format).
-
-After all queries, decode the final $S$ into ASCII: every consecutive pair of hex digits maps to one ASCII character.
+After all queries, decode the final $S$ to ASCII as before.
 
 ### Input
 
-- Line 1: the initial mysterious string in `d_1|d_2|...|d_m` format.
-- Line 2: integer $q$ ($1 \leq q \leq 1000$).
-- Next $q$ lines: query descriptions as specified above.
+- Line 1: initial mysterious string.
+- Line 2: $q$ ($1 \leq q \leq 1000$).
+- Next $q$ lines: queries.
 
 ### Constraints
 
-- The length of $S$ never exceeds 100,000 characters at any point.
-- For `Replace`: `old` is guaranteed to be non-empty; `new` may be empty (deletion).
+$|S| \leq 100\,000$ at all times.
 
 ### Output
 
-Output the final decoded ASCII string on a single line.
+The final decoded ASCII string on a single line.
+
+### Subtasks
+
+| Subtask | Points | Constraints |
+|---------|--------|-------------|
+| 1 | 15 | $q \leq 20$; only `Insert` and `Remove`; $|S| \leq 1000$ |
+| 2 | 20 | $q \leq 100$; adds `Reverse`; $|S| \leq 5000$ |
+| 3 | 20 | $q \leq 500$; adds `Replace`; `old` always has length 2 (one byte); $|S| \leq 10000$ |
+| 4 | 20 | $q \leq 1000$; `Replace` with arbitrary-length `old`; $|S| \leq 50000$ |
+| 5 | 25 | Full constraints; $|S| \leq 100000$; time-tight |
 
 ### Sample Input
 
@@ -194,30 +229,35 @@ No~~~~ It is too hard~~~~
 
 ## Problem 5 — NEWater II
 
-A billboard system stores text as a one-dimensional array of $N$ strings. Length tracking and lack of null terminators work the same as in the original problem. All strings are initially empty.
+Same billboard string array as the original. No null terminators; `len[i]` is authoritative. All strings initially empty.
 
-You must process $Q$ queries of the following types:
+Process $Q$ queries:
 
-- `0 i c` — Append the single character `c` to the end of string $i$.
-- `1 i s` — Append the string `s` to the end of string $i$.
-- `2` — Print all non-empty strings in order from index $0$ to $N-1$, one per line.
-- `3 i j` — Swap strings $i$ and $j$ (including their lengths).
-- `4 i k` — Delete the first $k$ characters of string $i$. If $k \geq$ `len[i]`, the string becomes empty.
-- `5 i j s` — Insert the string `s` into string $i$ at position $j$ (0-indexed, inserting before the character currently at position $j$). If $j =$ `len[i]`, this is equivalent to appending.
+- `0 i c` — append character `c` to string $i$.
+- `1 i s` — append string `s` to string $i$.
+- `2` — print all non-empty strings in index order, one per line.
+- `3 i j` — swap strings $i$ and $j$ (including their lengths).
+- `4 i k` — delete the first $k$ characters of string $i$. If $k \geq \text{len}[i]$, the string becomes empty.
+- `5 i j s` — insert string `s` into string $i$ at position $j$ (0-indexed, before the character currently at $j$). If $j = \text{len}[i]$, equivalent to appending.
 
 ### Input
 
-- Line 1: two integers $N$ ($1 \leq N \leq 1000$) and $Q$ ($1 \leq Q \leq 10000$).
-- Next $Q$ lines: queries as described above.
-
-### Output
-
-For every type-`2` query, print all non-empty strings in index order, each on its own line.
+- Line 1: $N$ ($1 \leq N \leq 1000$) and $Q$ ($1 \leq Q \leq 10\,000$).
+- Next $Q$ lines: queries.
 
 ### Constraints
 
-- Total characters across all strings never exceed $10^6$ at any time.
-- All indices are valid (in-bounds) unless stated otherwise.
+Total characters across all strings $\leq 10^6$ at all times. All indices are valid.
+
+### Subtasks
+
+| Subtask | Points | Constraints |
+|---------|--------|-------------|
+| 1 | 15 | $N \leq 10$, $Q \leq 100$; only types 0–2 (same as original) |
+| 2 | 20 | $N \leq 50$, $Q \leq 500$; adds type-3 (swap) |
+| 3 | 20 | $N \leq 100$, $Q \leq 1000$; adds type-4 (delete prefix) |
+| 4 | 20 | $N \leq 500$, $Q \leq 5000$; adds type-5 (insert at position) |
+| 5 | 25 | Full constraints |
 
 ### Sample Input
 
@@ -248,19 +288,29 @@ a6KKPba5qeOK
 
 ## Problem 6 — Crystalline Spire Energy Harvest II
 
-There are $N \times M$ spires arranged in a 2D grid. Each spire at position $(r, c)$ has height $H[r][c]$ and broadcasts energy $V[r][c]$ to its four immediate neighbours (up, down, left, right). A neighbour absorbs the energy only if it is **strictly taller** than the broadcasting spire. Energy from multiple neighbours accumulates.
+There is an $N \times M$ 2D grid of spires. Each cell $(r, c)$ broadcasts energy $V[r][c]$ to its four immediate neighbours (up, down, left, right). A neighbour absorbs only if it is **strictly taller**. Energy accumulates from multiple sources.
 
-You are given $Q$ queries. Each query specifies a cell $(r, c)$ whose height is **toggled**: if it was previously modified, it reverts to its original height; otherwise, it changes to a new given height $H'$. After each toggle, output the 0-indexed cell (in row-major order, i.e., index $= r \times M + c$) that receives the maximum total absorbed energy, along with the amount. If multiple cells are tied, output the one with the smaller row-major index.
+You receive $Q$ queries. Each query gives a cell $(r, c)$ and a new height $H'$. The height is **toggled**: if previously modified, it reverts to its original value; otherwise it changes to $H'$. After each toggle, output the cell (in row-major order: index $= r \times M + c$) that receives the maximum total absorbed energy, and the amount. On a tie, output the smaller row-major index.
 
 ### Input
 
-- Line 1: three integers $N$, $M$ ($1 \leq N, M \leq 1000$) and $Q$ ($1 \leq Q \leq 10000$).
-- Next $N$ lines: each contains $M$ pairs of integers $H[r][c]$ ($|H[r][c]| \leq 2 \times 10^9$) and $V[r][c]$ ($0 \leq V[r][c] \leq 10^9$), space-separated.
-- Next $Q$ lines: each contains three integers $r$, $c$, $H'$ — toggle the height of cell $(r, c)$ to $H'$ (or revert it if it was already toggled).
+- Line 1: $N$, $M$ ($1 \leq N, M \leq 1000$) and $Q$ ($1 \leq Q \leq 10\,000$).
+- Next $N$ lines: each contains $M$ pairs $H[r][c]$ ($|H| \leq 2 \times 10^9$) and $V[r][c]$ ($0 \leq V \leq 10^9$), space-separated.
+- Next $Q$ lines: $r$, $c$, $H'$ — toggle the height of cell $(r, c)$.
 
 ### Output
 
-For each query, output two space-separated values: the row-major index of the cell receiving maximum energy, and the total energy it receives.
+For each query, output two space-separated values: the row-major index of the max-energy cell and the total energy it receives.
+
+### Subtasks
+
+| Subtask | Points | Constraints |
+|---------|--------|-------------|
+| 1 | 15 | $N = 1$ (1D case); $M \leq 1000$; $Q \leq 100$ |
+| 2 | 20 | $N, M \leq 50$; $Q \leq 100$; re-compute from scratch each query is acceptable |
+| 3 | 20 | $N, M \leq 200$; $Q \leq 1000$ |
+| 4 | 25 | $N, M \leq 500$; $Q \leq 5000$ |
+| 5 | 20 | Full constraints; $N, M \leq 1000$; $Q \leq 10000$; time-tight |
 
 ### Sample Input
 
@@ -285,28 +335,28 @@ For each query, output two space-separated values: the row-major index of the ce
 
 ## Problem 7 — Check Checkmate II
 
-Fujiwara no Sai is now analyzing more complex chess puzzles. He wants to know all ways to capture the opponent's King in **3 moves or fewer**.
+Same chess setup as the original. Now find if the King can be captured in **3 moves or fewer**. A Pawn reaching the last row is **immediately promoted to a Queen** before the sequence continues.
 
-The chessboard, piece types, and movement rules are the same as in the original problem. Additionally, a Pawn that reaches the last row is **immediately promoted** to a Queen before the current move sequence continues.
-
-Find the **minimum** number of moves needed to capture the opponent's King. Output **all distinct move sequences** of that minimum length, sorted in **lexicographic order** by the sequence of moves (each move written as `startPos endPos`, compared character by character).
-
-If the King cannot be captured in 3 moves or fewer, output `0`.
+Find the **minimum** number of moves needed. Output **all distinct move sequences** of that minimum length, sorted **lexicographically** (each move written as `start end`, sequences compared character by character). If the King cannot be captured in 3 moves or fewer, output `0`.
 
 ### Input
 
-- Line 1: integer $t$ — number of test cases.
-- For each test case:
-  - Line 1: integer $p$ — number of Sai's pieces.
-  - Next $p$ lines: piece type and position.
-  - Line: integer $o$ — number of opponent's pieces.
-  - Next $o$ lines: opponent piece type and position.
+Same format as the original.
 
 ### Output
 
-For each test case:
-- Line 1: the minimum number of moves $n$ (or `0` if impossible).
-- If $n > 0$: output all distinct shortest move sequences, one sequence per block. Each sequence block contains $n$ lines (one move per line as `startPos endPos`). Separate sequences with a blank line. Sort sequences lexicographically.
+- Line 1: minimum number of moves $n$ (or `0`).
+- If $n > 0$: all distinct shortest sequences, one per block of $n$ lines each. Separate sequences with a blank line. Sort sequences lexicographically.
+
+### Subtasks
+
+| Subtask | Points | Constraints |
+|---------|--------|-------------|
+| 1 | 15 | $t \leq 3$; King capturable in 1 move; no promotion |
+| 2 | 20 | $t \leq 5$; 1 or 2 moves; only one valid sequence exists; no promotion |
+| 3 | 20 | $t \leq 5$; 1–2 moves; multiple valid sequences; no promotion |
+| 4 | 25 | $t \leq 10$; 1–3 moves; multiple sequences; no promotion |
+| 5 | 20 | $t \leq 10$; full constraints including pawn promotion |
 
 ### Sample Input
 
@@ -333,36 +383,46 @@ H6 H8
 
 ## Problem 8 — Magical Evaluation II
 
-$n$ mages are undergoing the First-Class Mage Exam. Each mage has a name and a mana value ($-99$ to $99$). You are given $q$ queries; each query either sorts or modifies the roster.
+Same mage exam as the original, but with **8 sorting rules** and **dynamic add/remove** queries.
 
-**Sorting Rules (rules 0–7):**
+**Sorting Rules (0–7):**
 
 | Rule | Sort key | Tiebreaker |
 |------|----------|------------|
-| 0 | `value` ascending | Name lexicographically ascending |
-| 1 | `value²` ascending | Name lexicographically ascending |
-| 2 | Digit sum of `|value|` ascending | Name lexicographically ascending |
-| 3 | Swap tens and units digits of `value`, preserve sign, sort ascending | Name lexicographically ascending |
-| 4 | Prime `|value|` first (ascending by original value), non-prime after (ascending by original value) | Name lexicographically ascending |
-| 5 | Number of distinct prime factors of `|value|` ascending (0 and 1 have 0 prime factors) | Name lexicographically ascending |
-| 6 | Sum of all positive divisors of `|value|` ascending (0 has divisor sum 0; 1 has divisor sum 1) | Name lexicographically ascending |
-| 7 | Length of the longest non-decreasing subsequence of the binary representation of `|value|` **descending** | Name lexicographically ascending |
+| 0 | `value` ascending | Name lex. ascending |
+| 1 | `value²` ascending | Name lex. ascending |
+| 2 | Digit sum of `|value|` ascending | Name lex. ascending |
+| 3 | Swap tens+units digits, preserve sign, ascending | Name lex. ascending |
+| 4 | Prime `|value|` first (asc), non-prime after (asc) | Name lex. ascending |
+| 5 | Number of **distinct** prime factors of `|value|` ascending (0 and 1 → 0 factors) | Name lex. ascending |
+| 6 | Sum of all positive divisors of `|value|` ascending (0 → sum 0; 1 → sum 1) | Name lex. ascending |
+| 7 | Length of longest non-decreasing subsequence of binary representation of `|value|`, **descending** | Name lex. ascending |
 
 **Query types:**
 
-- `S rule` — Sort using the given rule (0–7) and print all names, one per line.
-- `A name value` — Add a new mage with the given name and value to the roster.
-- `D name` — Remove the mage with the given name from the roster.
+- `S rule` — sort by the given rule (0–7) and print all names, one per line, followed by a blank line.
+- `A name value` — add a mage with the given name and value.
+- `D name` — remove the mage with the given name.
 
 ### Input
 
-- Line 1: two integers $n$ and $q$ ($1 \leq n \leq 1000$, $1 \leq q \leq 1000$).
-- Next $n$ lines: `name` (at most 30 characters) and `value` ($-99 \leq \text{value} \leq 99$).
-- Next $q$ lines: queries in the format described above.
+- Line 1: $n$ ($1 \leq n \leq 1000$) and $q$ ($1 \leq q \leq 1000$).
+- Next $n$ lines: `name` (≤ 30 chars) and `value` (−99 to 99).
+- Next $q$ lines: queries.
 
 ### Output
 
-For each `S` query, output the sorted names one per line, followed by a blank line.
+For each `S` query, output sorted names one per line, followed by a blank line.
+
+### Subtasks
+
+| Subtask | Points | Constraints |
+|---------|--------|-------------|
+| 1 | 15 | No `A`/`D` queries; only Rules 0–4 (same as original) |
+| 2 | 15 | No `A`/`D` queries; Rules 0–6 |
+| 3 | 20 | No `A`/`D` queries; all Rules 0–7 |
+| 4 | 25 | `A`/`D` queries present; Rules 0–6; roster never empty |
+| 5 | 25 | Full constraints; all Rules 0–7; `A`/`D` queries; roster may become empty |
 
 ### Sample Input
 

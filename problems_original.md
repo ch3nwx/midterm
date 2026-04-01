@@ -4,21 +4,25 @@
 
 ## Problem 1 — 9463: GCD
 
-Given two positive integers $a$ and $b$, compute the greatest common divisor (GCD) of $a$ and $b$. The GCD of $a$ and $b$ is the biggest integer that can divide both $a$ and $b$ with no remainder.
+Given two positive integers $a$ and $b$, compute their greatest common divisor (GCD) — the largest integer that divides both with no remainder.
 
 ### Input
 
-The first line contains a positive integer $t$ ($t \leq 1000$), which indicates the number of test cases. In the next $t$ lines, each line contains two positive integers $a$ and $b$, both $\leq 10^6$.
-
-**Subtask constraints:**
-- Case 1: $t \leq 100$, $a, b \leq 100$
-- Case 2: $t \leq 10000$, $a, b \leq 10000$
-- Case 3: $t \leq 20000$, $a, b \leq 100000$
-- Case 4: $t \leq 25000$, $a, b \leq 1000000$
+- Line 1: integer $t$ — number of test cases.
+- Next $t$ lines: two positive integers $a$ and $b$.
 
 ### Output
 
-For each test case, output the GCD of $a$ and $b$ on a single line.
+For each test case, print the GCD of $a$ and $b$ on a single line.
+
+### Subtasks
+
+| Subtask | Points | $t \leq$ | $a, b \leq$ |
+|---------|--------|-----------|-------------|
+| 1 | 25 | 100 | 100 |
+| 2 | 25 | 10 000 | 10 000 |
+| 3 | 25 | 20 000 | 100 000 |
+| 4 | 25 | 25 000 | 1 000 000 |
 
 ### Sample Input
 
@@ -41,31 +45,40 @@ For each test case, output the GCD of $a$ and $b$ on a single line.
 
 ---
 
-## Problem 2 — 14151: Table Management System ver.2
+## Problem 2 — 14151: Table Management System
 
-Hodilo is a well-known hot pot restaurant, and it is extremely challenging to get a table during peak dining hours. The restaurant does not accept reservations in advance, requiring every guest to visit the restaurant, take a number, and wait for their turn. You have been invited to design a queuing system that helps assign a table to each guest.
+Hodilo is a well-known hot pot restaurant, and it is extremely challenging to get a table during peak dining hours. The restaurant does not accept reservations in advance — guests visit, take a number, and wait. Write a program that simulates the entire queuing and seating system.
 
-This is a **partial judge** problem. You must implement four helper functions in `function.h`:
+The simulation runs from **11:00 (minute 660)** to **15:00 (minute 900)** inclusive. At each minute:
 
-- `Table* createTable()` — Read the number of tables and their sizes from input, allocate memory, and return a pointer to the Table array.
-- `Guest* createGuest()` — Read the next guest's information (name, group size, arrival time, dining time) and return a pointer to a new Guest struct.
-- `Guest* checkLeave(Table* tables, int tableCount, int currentTime)` — Scan all tables and return a pointer to the first guest whose departure time equals `currentTime`. If no guest is leaving, return `NULL`. (When a guest leaves, free the associated memory and mark the table as empty.)
-- `int assignTable(Table* tables, int tableCount, Guest* guest)` — Find the first empty table whose size is $\geq$ `guest->groupSize`. If found, seat the guest and return the table index (0-based); otherwise return `-1`.
-
-The main loop simulates time from **11:00 (minute 660)** to **15:00 (minute 900)** inclusive, advancing one minute at a time.
+1. Check if any seated guest's dining time has expired. If so, they leave and the table becomes empty. Process **all** departures before any arrivals at the same minute.
+2. Check if the next guest in the input list arrives at this minute. Assign them to the **first** empty table whose capacity $\geq$ their group size. If no such table is available, the guest leaves without being seated. Continue assigning all guests arriving at this minute.
+3. At minutes 660, 720, 780, 840, and 900, print the current table snapshot.
 
 ### Input
 
 - Line 1: integer $N$ ($1 \leq N \leq 50$) — number of tables.
 - Line 2: $N$ integers $x_i$ ($1 \leq x_i \leq 4$) — capacity of each table.
-- Line 3: integer $M$ ($1 \leq M \leq 50$) — number of incoming guests.
-- Next $M$ lines: each contains `guest_name` (at most 10 characters), `group_size` (1–4), `arrival_time` (660–900), `dining_time` (1–300 minutes). Guest arrival times are in non-decreasing order.
+- Line 3: integer $M$ ($1 \leq M \leq 50$) — number of guests.
+- Next $M$ lines: `name` (≤ 10 chars), `group_size` (1–4), `arrival_time` (660–900), `dining_time` (1–300). Arrival times are non-decreasing.
 
 ### Output
 
-Output is already handled by `main.c`:
-- When a guest enters or leaves: `hh:mm (minutes) -> guestName: enter` or `hh:mm (minutes) -> guestName: leave`
-- At each full hour (minute 720, 780, 840, 900): `hh:mm (minutes) -> table: |guestName(remainingMin)| ... |guestName(remainingMin)|` (empty tables shown as `||`)
+- Guest seated: `hh:mm (minutes) -> name: enter`
+- Guest leaves: `hh:mm (minutes) -> name: leave`
+- Table snapshot: `hh:mm (minutes) -> table: |name(Xmin)|...|name(Xmin)|` (empty table = `||`)
+
+Events at the same minute: departures first, then arrivals, then snapshot (if on the hour).
+
+### Subtasks
+
+| Subtask | Points | Constraints |
+|---------|--------|-------------|
+| 1 | 20 | $N, M \leq 5$; all guests can always be seated immediately |
+| 2 | 20 | $N, M \leq 10$; no two guests share the same arrival time |
+| 3 | 20 | $N, M \leq 30$; guests may arrive at the same minute |
+| 4 | 20 | $N, M \leq 50$; a guest may arrive when no table is available (they leave immediately) |
+| 5 | 20 | Full constraints |
 
 ### Sample Input
 
@@ -105,27 +118,37 @@ Bob 3 820 10
 
 ## Problem 3 — 14900: Neural Link Node Repair
 
-You are given $T$ neural link nodes. Each node is represented as a 32-bit unsigned integer. Apply the following three rules **in sequence** to each node and output the result.
+You are given $T$ neural link nodes. Each node is a 32-bit unsigned integer. Apply the following three rules **in sequence** to each node and output the result.
 
 **Rule 1 — Overload Detection:**
-If any two consecutive bits are both 1 (i.e., `S & (S >> 1) != 0`), the node is overloaded. Output `0xFFFFFFFF` and skip Rules 2 and 3 for this node.
+If any two consecutive bits are both 1 (i.e., `S & (S >> 1) != 0`), the node is overloaded. Output `0xFFFFFFFF` and skip Rules 2 and 3.
 
 **Rule 2 — Neural Bridging:**
-Find the position of the highest set bit (MSB) and the lowest set bit (LSB) in $S$. Fill all bits between them (inclusive) with 1s. Formally, compute:
-$$\text{bridge} = \left((1 \ll (\text{msb}+1)) - 1\right) \;\&\; \sim\left((1 \ll \text{lsb}) - 1\right)$$
+Find the highest set bit (MSB) and lowest set bit (LSB). Fill all bits between them (inclusive) with 1s:
+$$\text{bridge} = \bigl((1 \ll (\text{msb}+1)) - 1\bigr) \;\&\; \sim\bigl((1 \ll \text{lsb}) - 1\bigr)$$
 If $S = 0$, output `0x00000000` and skip Rule 3.
 
 **Rule 3 — Checksum Integration:**
-XOR all four bytes of `bridge` together to produce a single checksum byte. Replace the lowest byte of `bridge` with this checksum.
+XOR all four bytes of `bridge` together into a single checksum byte. Replace the lowest byte of `bridge` with this checksum.
 
 ### Input
 
 - Line 1: integer $T$ — number of test cases.
-- Next $T$ lines: each contains a 32-bit unsigned integer in hexadecimal format (with `0x` prefix).
+- Next $T$ lines: a 32-bit unsigned integer with `0x` prefix.
 
 ### Output
 
-For each test case, output the result as a zero-padded 8-digit uppercase hexadecimal value with `0x` prefix (e.g., `0x0A2B4C6D`).
+For each test case, output the result as a zero-padded 8-digit uppercase hex value with `0x` prefix (e.g., `0x0A2B4C6D`).
+
+### Subtasks
+
+| Subtask | Points | Constraints |
+|---------|--------|-------------|
+| 1 | 15 | $T \leq 10$; all inputs trigger Rule 1 or are zero |
+| 2 | 15 | $T \leq 100$; MSB = LSB (single set bit), Rule 3 only XORs one non-zero byte |
+| 3 | 20 | $T \leq 1000$; no input triggers Rule 1 |
+| 4 | 25 | $T \leq 10000$; mix of all three rule paths |
+| 5 | 25 | $T \leq 100000$; full constraints |
 
 ### Sample Input
 
@@ -155,30 +178,39 @@ For each test case, output the result as a zero-padded 8-digit uppercase hexadec
 You are given an initial mysterious string and $q$ queries.
 
 **Initialization:**
-A mysterious string is given in the format `d_1|d_2|...|d_m`, where each $d_i$ is a decimal integer. To decode it:
-1. Convert each $d_i$ to its uppercase hexadecimal string representation with **no zero-padding** (e.g., `20065` → `4E61`).
-2. Concatenate all hex strings sequentially to form the working string $S$.
+A mysterious string has format `d_1|d_2|...|d_m` where each $d_i$ is a decimal integer. To decode:
+1. Convert each $d_i$ to its uppercase hexadecimal string with **no zero-padding** (e.g., `20065` → `4E61`).
+2. Concatenate all hex strings to form the working string $S$.
 
 **Queries (two types):**
-- `Insert idx str` — Decode `str` (in mysterious string format) into a hex string $S_\text{ins}$ using the same Initialization rules. Insert $S_\text{ins}$ into $S$ at position `idx` (0-indexed, inserting before the character currently at `idx`).
-- `Remove idx len` — Delete exactly `len` characters from $S$ starting at position `idx` (remove characters at indices `idx` through `idx + len - 1`).
+- `Insert idx str` — decode `str` into hex string $S_\text{ins}$; insert it into $S$ at position `idx` (0-indexed, before the character currently at `idx`).
+- `Remove idx len` — delete exactly `len` characters from $S$ starting at `idx`.
 
-After all queries, decode the final $S$ into ASCII: every consecutive pair of hex digits represents one ASCII character (e.g., `4E6F` → `No`).
+After all queries, decode the final $S$ to ASCII: every consecutive pair of hex digits maps to one ASCII character (e.g., `4E6F` → `No`).
 
 ### Input
 
-- Line 1: the initial mysterious string in `d_1|d_2|...|d_m` format.
+- Line 1: the initial mysterious string.
 - Line 2: integer $q$ ($1 \leq q \leq 100$).
-- Next $q$ lines: query descriptions as specified above.
+- Next $q$ lines: queries as described.
 
 ### Constraints
 
-- $0 \leq$ `idx` $\leq |S|$ for Insert; $0 \leq$ `idx`, `idx + len - 1` $< |S|$ for Remove.
-- The length of $S$ never exceeds 10,000 characters at any point.
+$|S| \leq 10\,000$ at all times.
 
 ### Output
 
-Output the final decoded ASCII string on a single line.
+The final decoded ASCII string on a single line.
+
+### Subtasks
+
+| Subtask | Points | Constraints |
+|---------|--------|-------------|
+| 1 | 15 | $q \leq 5$; only `Insert` queries; no overlapping indices |
+| 2 | 15 | $q \leq 20$; only `Remove` queries |
+| 3 | 25 | $q \leq 50$; mix of both; each $d_i \leq 255$ (single hex byte) |
+| 4 | 25 | $q \leq 100$; full constraints, $|S| \leq 5000$ |
+| 5 | 20 | $q \leq 100$; $|S| \leq 10000$ |
 
 ### Sample Input
 
@@ -202,22 +234,32 @@ No~~ It is too hard~~
 
 ## Problem 5 — 14903: NEWater
 
-A billboard system stores text as a one-dimensional array of $N$ strings. Each string $i$ has a corresponding length value `len[i]` that specifies how many characters are currently in it. The strings do **not** use null terminators; `len[i]` is the sole indicator of length. All strings are initially empty.
+A billboard system stores text as an array of $N$ strings. Each string $i$ has a length value `len[i]`. There are **no null terminators** — `len[i]` is the sole indicator of how many characters are valid. All strings are initially empty.
 
-You must process $Q$ queries of the following types:
+Process $Q$ queries:
 
-- `0 i c` — Append the single character `c` to the end of string $i$.
-- `1 i s` — Append the string `s` to the end of string $i$.
-- `2` — Print all non-empty strings in order from index $0$ to $N-1$, one per line.
+- `0 i c` — append character `c` to string $i$.
+- `1 i s` — append string `s` to string $i$.
+- `2` — print all non-empty strings in order (index 0 to $N-1$), one per line.
 
 ### Input
 
 - Line 1: two integers $N$ ($1 \leq N \leq 100$) and $Q$ ($1 \leq Q \leq 1000$).
-- Next $Q$ lines: queries as described above.
+- Next $Q$ lines: queries as described.
 
 ### Output
 
 For every type-`2` query, print all non-empty strings in index order, each on its own line.
+
+### Subtasks
+
+| Subtask | Points | Constraints |
+|---------|--------|-------------|
+| 1 | 15 | $N=1$, $Q \leq 20$; only type-`0` and type-`2` queries |
+| 2 | 15 | $N \leq 5$, $Q \leq 50$; type-`1` strings contain only lowercase letters |
+| 3 | 20 | $N \leq 20$, $Q \leq 200$; at most one type-`2` query |
+| 4 | 25 | $N \leq 50$, $Q \leq 500$; multiple type-`2` queries |
+| 5 | 25 | Full constraints |
 
 ### Sample Input
 
@@ -245,18 +287,28 @@ aqnoQc6
 
 ## Problem 6 — 14904: Crystalline Spire Energy Harvest
 
-There are $N$ spires arranged in a line. Each spire $i$ has a height $H[i]$ and broadcasts energy $V[i]$ to its immediate neighbours (left: $i-1$, right: $i+1$). A neighbour **absorbs** the energy only if it is **strictly taller** than spire $i$. If the neighbour is shorter, equal in height, or does not exist, the energy dissipates.
+There are $N$ spires in a line. Spire $i$ has height $H[i]$ and broadcasts energy $V[i]$ to its immediate neighbours (left: $i-1$, right: $i+1$). A neighbour **absorbs** the energy only if it is **strictly taller** than spire $i$. Energy accumulates from multiple sources.
 
-Find the spire that receives the most total absorbed energy. If multiple spires are tied, output the one with the **smaller index** (0-indexed).
+Find the spire that receives the most total absorbed energy. On a tie, output the one with the smaller index (0-indexed).
 
 ### Input
 
 - Line 1: integer $N$ ($1 \leq N \leq 5 \times 10^6$).
-- Next $N$ lines: two integers $H[i]$ (height, $|H[i]| \leq 2 \times 10^9$) and $V[i]$ (energy broadcast, $0 \leq V[i] \leq 10^9$).
+- Next $N$ lines: $H[i]$ ($|H[i]| \leq 2 \times 10^9$) and $V[i]$ ($0 \leq V[i] \leq 10^9$).
 
 ### Output
 
-Two space-separated integers on one line: the 0-indexed spire number that receives maximum energy, and the total energy it receives.
+Two space-separated integers: the 0-indexed spire number and the total energy it receives.
+
+### Subtasks
+
+| Subtask | Points | Constraints |
+|---------|--------|-------------|
+| 1 | 15 | $N \leq 10$; all heights are distinct and positive |
+| 2 | 15 | $N \leq 1000$; heights are distinct |
+| 3 | 20 | $N \leq 10^5$; heights may be equal (ties in height → no absorption) |
+| 4 | 25 | $N \leq 10^6$; negative heights allowed |
+| 5 | 25 | $N \leq 5 \times 10^6$; full constraints, time-sensitive |
 
 ### Sample Input
 
@@ -280,9 +332,9 @@ Two space-separated integers on one line: the 0-indexed spire number that receiv
 
 ## Problem 7 — 14905: Check Checkmate
 
-Fujiwara no Sai is analyzing chess puzzles. He wants to know if it is possible to capture the opponent's King in **2 moves or fewer**.
+Fujiwara no Sai is analyzing chess puzzles. Determine if the opponent's King can be captured in **2 moves or fewer**.
 
-The chessboard is a standard 8×8 grid, columns labeled `A`–`H`, rows labeled `1`–`8`. Sai controls the following pieces using standard chess movement rules:
+Standard 8×8 board, columns A–H, rows 1–8. Piece movement rules:
 
 | Piece | Movement |
 |-------|----------|
@@ -290,26 +342,36 @@ The chessboard is a standard 8×8 grid, columns labeled `A`–`H`, rows labeled 
 | R (Rook) | Any number of vacant squares horizontally or vertically |
 | N (Knight) | L-shape: 2 squares in one direction, 1 square perpendicular |
 | B (Bishop) | Any number of vacant squares diagonally |
-| P (Pawn) | Moves forward one square; captures diagonally forward one square; may move two squares from starting row |
+| P (Pawn) | Forward one square; captures diagonally forward one square; may move two from starting row |
 | K (King) | One square in any direction |
 
-A piece can **capture** an opponent's piece by moving to its square. Sai wins by capturing the opponent's King.
+A piece captures an opponent by moving onto its square.
 
 ### Input
 
 - Line 1: integer $t$ — number of test cases.
 - For each test case:
-  - Line 1: integer $p$ — number of Sai's pieces.
+  - Line 1: $p$ — number of Sai's pieces.
   - Next $p$ lines: piece type and position (e.g., `Q H1`).
-  - Line: integer $o$ — number of opponent's pieces.
+  - Line: $o$ — number of opponent's pieces.
   - Next $o$ lines: opponent piece type and position.
 
 ### Output
 
 For each test case:
-- If the King can be captured in 1 move: print `1`, then the move on the next line (start and end position separated by a space, e.g., `H1 H8`).
-- If the King can be captured in 2 moves: print `2`, then both moves on separate lines.
-- If the King cannot be captured in 2 moves or fewer: print `0`.
+- If the King can be captured in 1 move: print `1`, then the move on the next line (`start end`, e.g., `H1 H8`).
+- In 2 moves: print `2`, then both moves on separate lines.
+- Otherwise: print `0`.
+
+### Subtasks
+
+| Subtask | Points | Constraints |
+|---------|--------|-------------|
+| 1 | 15 | $t \leq 3$; King capturable in exactly 1 move; only Queens and Rooks |
+| 2 | 20 | $t \leq 5$; 1-move capture possible; all piece types |
+| 3 | 20 | $t \leq 5$; capture requires exactly 2 moves; no blocking pieces |
+| 4 | 25 | $t \leq 10$; 2-move capture; opponent has blocking pieces |
+| 5 | 20 | $t \leq 20$; full constraints; may require 0 (impossible) |
 
 ### Sample Input
 
@@ -349,7 +411,7 @@ H6 H8
 
 ## Problem 8 — 14906: Magical Evaluation
 
-$n$ mages are undergoing the First-Class Mage Exam. Each mage has a name and a mana value (an integer from $-99$ to $99$). You are given $q$ queries; each query specifies a sorting rule. Sort all mages by the specified rule and output their names.
+$n$ mages are taking the First-Class Mage Exam. Each mage has a name and a mana value (−99 to 99). For each of $q$ queries, sort all mages by the specified rule and output their names.
 
 **Sorting Rules:**
 
@@ -357,19 +419,29 @@ $n$ mages are undergoing the First-Class Mage Exam. Each mage has a name and a m
 |------|----------|------------|
 | 0 | `value` ascending | Name lexicographically ascending |
 | 1 | `value²` ascending | Name lexicographically ascending |
-| 2 | Digit sum of `|value|` ascending (e.g., $-85 \to 8+5=13$) | Name lexicographically ascending |
-| 3 | Swap tens and units digits of `value`, preserve sign, sort ascending (e.g., $78 \to 87$, $-6 \to -60$, $10 \to 1$) | Name lexicographically ascending |
-| 4 | Absolute value is prime → comes first; non-prime → comes after. Within each group, sort by original `value` ascending. | Name lexicographically ascending |
+| 2 | Digit sum of `|value|` ascending (e.g., −85 → 8+5=13) | Name lexicographically ascending |
+| 3 | Swap tens and units digits, preserve sign, ascending (e.g., 78→87, −6→−60, 10→1) | Name lexicographically ascending |
+| 4 | Prime `|value|` first (ascending by original value), non-prime after (ascending) | Name lexicographically ascending |
 
 ### Input
 
-- Line 1: two integers $n$ and $q$ ($1 \leq n, q \leq 100$).
-- Next $n$ lines: `name` (at most 30 characters) and `value` ($-99 \leq \text{value} \leq 99$).
-- Next $q$ lines: a single integer (0–4) — the rule for that query.
+- Line 1: $n$ and $q$ ($1 \leq n, q \leq 100$).
+- Next $n$ lines: `name` (≤ 30 chars) and `value`.
+- Next $q$ lines: a rule number (0–4).
 
 ### Output
 
-For each query, output the sorted names one per line, followed by a blank line.
+For each query, output sorted names one per line, followed by a blank line.
+
+### Subtasks
+
+| Subtask | Points | Constraints |
+|---------|--------|-------------|
+| 1 | 20 | $n, q \leq 10$; only Rule 0 |
+| 2 | 20 | $n, q \leq 30$; only Rules 0 and 1; no ties |
+| 3 | 20 | $n, q \leq 50$; Rules 0–2; ties possible |
+| 4 | 20 | $n, q \leq 100$; Rules 0–3 |
+| 5 | 20 | $n, q \leq 100$; all Rules 0–4 |
 
 ### Sample Input
 

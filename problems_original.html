@@ -14,42 +14,33 @@
       padding: 16px 12px; position: sticky; top: 56px;
       height: calc(100vh - 56px); overflow-y: auto;
     }
-    #pv-content {
-      flex: 1; padding: 24px 32px; overflow-y: auto;
-      max-width: 860px;
-    }
+    #pv-content { flex: 1; padding: 24px 32px; overflow-y: auto; max-width: 860px; }
     .pv-sidebar-header h4 { font-weight: 600; color: #337ab7; }
     .pv-stats-row { margin-bottom: 6px; }
     .pv-progress { height: 8px; margin-bottom: 12px; border-radius: 4px; }
     .pv-prob-btn {
       text-align: left !important; white-space: normal;
-      margin-bottom: 4px; font-size: 13px;
-      border-radius: 4px !important;
+      margin-bottom: 4px; font-size: 13px; border-radius: 4px !important;
     }
-    .pv-prob-btn.active { background: #337ab7 !important; color: #fff !important;
-      border-color: #2e6da4 !important; }
+    .pv-prob-btn.active { background: #337ab7 !important; color: #fff !important; border-color: #2e6da4 !important; }
     .pv-prob-btn .badge { background: #5cb85c; }
-    /* Problem content styles */
     #pv-content h2 { margin-top: 0; color: #23527c; border-bottom: 2px solid #ddd; padding-bottom: 8px; }
     #pv-content h3 { color: #337ab7; margin-top: 20px; }
+    #pv-content h4 { color: #555; margin-top: 14px; }
     #pv-content pre {
-      background: #1e1e1e; color: #d4d4d4;
-      border-radius: 6px; padding: 14px 18px;
-      font-family: "Consolas", "Cascadia Code", monospace;
+      background: #1e1e1e; color: #d4d4d4; border-radius: 6px;
+      padding: 14px 18px; font-family: "Consolas","Cascadia Code",monospace;
       font-size: 13px; overflow-x: auto;
     }
     #pv-content table { margin-bottom: 12px; }
-    #pv-content .pv-done-btn { margin-top: 20px; }
+    .pv-done-btn { margin-top: 20px; }
     .pv-meta { color: #888; font-size: 12px; margin-bottom: 16px; }
-    .pv-constraint-box {
-      background: #fff8e1; border-left: 4px solid #ffc107;
-      padding: 10px 14px; border-radius: 4px; margin-bottom: 12px;
-    }
+    .pv-subtask-table th { background: #eaf4fb; }
+    .pv-rule-table th { background: #eaf4fb; }
   </style>
 </head>
 <body>
 
-<!-- Navbar -->
 <nav class="navbar navbar-inverse" style="margin-bottom:0;">
   <div class="container-fluid">
     <div class="navbar-header">
@@ -66,24 +57,25 @@
   </div>
 </nav>
 
-<!-- Problem templates (hidden, content cloned by WASM) -->
+<!-- ===================== PROBLEM TEMPLATES ===================== -->
 
 <template id="prob-0" data-pid="9463" data-title="GCD">
   <h2>9463 — GCD</h2>
-  <p class="pv-meta">Time: 1 sec &nbsp;|&nbsp; Memory: 32 MB &nbsp;|&nbsp; 4 subtasks</p>
+  <p class="pv-meta">Time: 1 sec &nbsp;|&nbsp; Memory: 32 MB</p>
   <p>Given two positive integers <em>a</em> and <em>b</em>, compute their greatest common divisor (GCD) — the largest integer that divides both with no remainder.</p>
   <h3>Input</h3>
-  <p>Line 1: integer <em>t</em> (≤ 1000) — number of test cases.<br>
-  Next <em>t</em> lines: two positive integers <em>a</em>, <em>b</em>.</p>
-  <div class="pv-constraint-box">
-    <strong>Subtask constraints:</strong><br>
-    Case 1: t ≤ 100, a,b ≤ 100<br>
-    Case 2: t ≤ 10 000, a,b ≤ 10 000<br>
-    Case 3: t ≤ 20 000, a,b ≤ 100 000<br>
-    Case 4: t ≤ 25 000, a,b ≤ 1 000 000
-  </div>
+  <p>Line 1: integer <em>t</em> — number of test cases.<br>
+     Next <em>t</em> lines: two positive integers <em>a</em> and <em>b</em>.</p>
   <h3>Output</h3>
-  <p>For each test case, print the GCD of <em>a</em> and <em>b</em> on a single line.</p>
+  <p>For each test case, print the GCD on a single line.</p>
+  <h3>Subtasks</h3>
+  <table class="table table-condensed table-bordered pv-subtask-table">
+    <tr><th>Subtask</th><th>Points</th><th>t ≤</th><th>a, b ≤</th></tr>
+    <tr><td>1</td><td>25</td><td>100</td><td>100</td></tr>
+    <tr><td>2</td><td>25</td><td>10 000</td><td>10 000</td></tr>
+    <tr><td>3</td><td>25</td><td>20 000</td><td>100 000</td></tr>
+    <tr><td>4</td><td>25</td><td>25 000</td><td>1 000 000</td></tr>
+  </table>
   <h3>Sample Input</h3>
   <pre>3
 2 4
@@ -94,33 +86,41 @@
 3
 5</pre>
   <div class="pv-done-btn">
-    <button class="btn btn-success" onclick="toggle_done('original', 0, 8); this.blur();">
-      Mark as Done
-    </button>
+    <button class="btn btn-success" onclick="toggle_done('original',0,8);this.blur();">Mark as Done</button>
   </div>
 </template>
 
-<template id="prob-1" data-pid="14151" data-title="Table Management ver.2">
-  <h2>14151 — Table Management System ver.2</h2>
-  <p class="pv-meta">Time: 1 sec &nbsp;|&nbsp; Memory: 512 MB &nbsp;|&nbsp; 5 subtasks &nbsp;|&nbsp; Partial Judge</p>
-  <p>Hodilo is a well-known hot pot restaurant. The restaurant does not accept reservations; guests visit, take a number, and wait. Design a queuing system that assigns tables.</p>
-  <p>This is a <strong>partial judge</strong> problem. Implement four functions in <code>function.h</code>:</p>
-  <ul>
-    <li><code>Table* createTable()</code> — read table count and sizes, allocate and return the Table array.</li>
-    <li><code>Guest* createGuest()</code> — read one guest's name, group size, arrival time, and dining time; return a new Guest.</li>
-    <li><code>Guest* checkLeave(Table* tables, int tableCount, int currentTime)</code> — return the first guest whose departure time equals <code>currentTime</code>; free that guest and mark the table empty. Return <code>NULL</code> if none.</li>
-    <li><code>int assignTable(Table* tables, int tableCount, Guest* guest)</code> — seat the guest at the first empty table with capacity ≥ group size; return the 0-based table index, or <code>-1</code> if none.</li>
-  </ul>
-  <p>The simulation runs from minute 660 (11:00) to minute 900 (15:00) inclusive, one minute at a time.</p>
+<template id="prob-1" data-pid="14151" data-title="Table Management System">
+  <h2>14151 — Table Management System</h2>
+  <p class="pv-meta">Time: 1 sec &nbsp;|&nbsp; Memory: 512 MB</p>
+  <p>Hodilo is a well-known hot pot restaurant. Guests visit, take a number, and wait for a table. Write a complete program that simulates the seating system.</p>
+  <p>The simulation runs from <strong>minute 660 (11:00)</strong> to <strong>minute 900 (15:00)</strong> inclusive. At each minute:</p>
+  <ol>
+    <li>Check for departing guests — if a guest's dining time has expired, they leave and the table becomes empty. Process <strong>all</strong> departures before any arrivals at the same minute.</li>
+    <li>Assign newly arrived guests to the <strong>first</strong> empty table whose capacity ≥ their group size. If no suitable table is free, the guest leaves without being seated. Process all guests arriving this minute.</li>
+    <li>At minutes 660, 720, 780, 840, and 900, print the table status snapshot.</li>
+  </ol>
   <h3>Input</h3>
   <p>Line 1: N (1 ≤ N ≤ 50) — number of tables.<br>
-  Line 2: N integers x<sub>i</sub> (1 ≤ x<sub>i</sub> ≤ 4) — table capacities.<br>
-  Line 3: M (1 ≤ M ≤ 50) — number of guests.<br>
-  Next M lines: <code>name</code> (≤ 10 chars), <code>group_size</code> (1–4), <code>arrival_time</code> (660–900), <code>dining_time</code> (1–300). Arrivals are in non-decreasing order.</p>
+     Line 2: N integers x<sub>i</sub> (1 ≤ x<sub>i</sub> ≤ 4) — capacity of each table.<br>
+     Line 3: M (1 ≤ M ≤ 50) — number of guests.<br>
+     Next M lines: <code>name</code> (≤ 10 chars), <code>group_size</code> (1–4), <code>arrival_time</code> (660–900), <code>dining_time</code> (1–300). Arrival times are non-decreasing.</p>
   <h3>Output</h3>
-  <p>(Handled by <code>main.c</code>)<br>
-  On each enter/leave event: <code>hh:mm (min) -&gt; name: enter/leave</code><br>
-  At each full hour: <code>hh:mm (min) -&gt; table: |name(remaining)|...|</code> (empty tables shown as <code>||</code>)</p>
+  <ul>
+    <li>Guest seated: <code>hh:mm (min) -&gt; name: enter</code></li>
+    <li>Guest leaves: <code>hh:mm (min) -&gt; name: leave</code></li>
+    <li>Snapshot: <code>hh:mm (min) -&gt; table: |name(Xmin)|...|name(Xmin)|</code> (empty table = <code>||</code>)</li>
+  </ul>
+  <p>At the same minute: departures first → arrivals → snapshot (if applicable).</p>
+  <h3>Subtasks</h3>
+  <table class="table table-condensed table-bordered pv-subtask-table">
+    <tr><th>Subtask</th><th>Points</th><th>Constraints</th></tr>
+    <tr><td>1</td><td>20</td><td>N, M ≤ 5; all guests can always be seated immediately</td></tr>
+    <tr><td>2</td><td>20</td><td>N, M ≤ 10; no two guests share the same arrival time</td></tr>
+    <tr><td>3</td><td>20</td><td>N, M ≤ 30; guests may arrive at the same minute</td></tr>
+    <tr><td>4</td><td>20</td><td>N, M ≤ 50; a guest may arrive when no table is available (they leave immediately)</td></tr>
+    <tr><td>5</td><td>20</td><td>Full constraints</td></tr>
+  </table>
   <h3>Sample Input</h3>
   <pre>3
 4 2 3
@@ -146,27 +146,35 @@ Bob 3 820 10</pre>
 15:00 (900) -> Bob: enter
 15:00 (900) -> table: |Bob(10min)|||</pre>
   <div class="pv-done-btn">
-    <button class="btn btn-success" onclick="toggle_done('original', 1, 8); this.blur();">Mark as Done</button>
+    <button class="btn btn-success" onclick="toggle_done('original',1,8);this.blur();">Mark as Done</button>
   </div>
 </template>
 
 <template id="prob-2" data-pid="14900" data-title="Neural Link Node Repair">
   <h2>14900 — Neural Link Node Repair</h2>
-  <p class="pv-meta">Time: 1 sec &nbsp;|&nbsp; Memory: 32 MB &nbsp;|&nbsp; 7 subtasks</p>
-  <p>You are given T neural link nodes. Each node is a 32-bit unsigned integer. Apply the following three rules <strong>in sequence</strong> to each node and output the result.</p>
-  <h3>Rule 1 — Overload Detection</h3>
-  <p>If any two consecutive bits are both 1 (i.e. <code>S &amp; (S &gt;&gt; 1) != 0</code>), the node is overloaded. Output <code>0xFFFFFFFF</code> and skip Rules 2 and 3.</p>
-  <h3>Rule 2 — Neural Bridging</h3>
-  <p>Find the highest set bit (MSB) and lowest set bit (LSB) of S. Fill all bits between them with 1s:<br>
+  <p class="pv-meta">Time: 1 sec &nbsp;|&nbsp; Memory: 32 MB</p>
+  <p>You are given T neural link nodes. Each node is a 32-bit unsigned integer. Apply the following three rules <strong>in sequence</strong> and output the result.</p>
+  <h4>Rule 1 — Overload Detection</h4>
+  <p>If <code>S &amp; (S &gt;&gt; 1) != 0</code> (two consecutive bits are both 1), output <code>0xFFFFFFFF</code> and skip Rules 2–3.</p>
+  <h4>Rule 2 — Neural Bridging</h4>
+  <p>Find the highest set bit (MSB) and lowest set bit (LSB). Fill all bits between them with 1s:<br>
   <code>bridge = ((1u &lt;&lt; (msb+1)) - 1) &amp; ~((1u &lt;&lt; lsb) - 1)</code><br>
   If S = 0, output <code>0x00000000</code> and skip Rule 3.</p>
-  <h3>Rule 3 — Checksum Integration</h3>
-  <p>XOR all four bytes of <code>bridge</code> to form a checksum byte. Replace the lowest byte of <code>bridge</code> with this checksum.</p>
+  <h4>Rule 3 — Checksum Integration</h4>
+  <p>XOR all four bytes of <code>bridge</code> into a checksum byte. Replace the lowest byte of <code>bridge</code> with this checksum.</p>
   <h3>Input</h3>
-  <p>Line 1: integer T — number of test cases.<br>
-  Next T lines: a 32-bit unsigned integer with <code>0x</code> prefix.</p>
+  <p>Line 1: T. Next T lines: a 32-bit unsigned integer with <code>0x</code> prefix.</p>
   <h3>Output</h3>
-  <p>For each test case, output the result as a zero-padded 8-digit uppercase hex value with <code>0x</code> prefix (e.g. <code>0x0A2B4C6D</code>).</p>
+  <p>Zero-padded 8-digit uppercase hex with <code>0x</code> prefix (e.g. <code>0x0A2B4C6D</code>).</p>
+  <h3>Subtasks</h3>
+  <table class="table table-condensed table-bordered pv-subtask-table">
+    <tr><th>Subtask</th><th>Points</th><th>Constraints</th></tr>
+    <tr><td>1</td><td>15</td><td>T ≤ 10; all inputs trigger Rule 1 or are zero</td></tr>
+    <tr><td>2</td><td>15</td><td>T ≤ 100; single set bit (MSB = LSB); no Rule 1 triggers</td></tr>
+    <tr><td>3</td><td>20</td><td>T ≤ 1 000; no Rule 1 triggers</td></tr>
+    <tr><td>4</td><td>25</td><td>T ≤ 10 000; all three rule paths</td></tr>
+    <tr><td>5</td><td>25</td><td>T ≤ 100 000; full constraints</td></tr>
+  </table>
   <h3>Sample Input</h3>
   <pre>4
 0x00000003
@@ -179,33 +187,38 @@ Bob 3 820 10</pre>
 0x00000008
 0x0FFFFFF1</pre>
   <div class="pv-done-btn">
-    <button class="btn btn-success" onclick="toggle_done('original', 2, 8); this.blur();">Mark as Done</button>
+    <button class="btn btn-success" onclick="toggle_done('original',2,8);this.blur();">Mark as Done</button>
   </div>
 </template>
 
 <template id="prob-3" data-pid="14901" data-title="It Is Very Simple">
   <h2>14901 — It Is Very Simple</h2>
-  <p class="pv-meta">Time: 1 sec &nbsp;|&nbsp; Memory: 32 MB &nbsp;|&nbsp; 8 subtasks</p>
-  <p>You are given an initial mysterious string and <em>q</em> queries.</p>
-  <h3>Initialization</h3>
-  <p>A mysterious string has the format <code>d₁|d₂|...|dₘ</code> where each dᵢ is a decimal integer. To decode it:</p>
-  <ol>
-    <li>Convert each dᵢ to its uppercase hexadecimal string with <strong>no zero-padding</strong> (e.g. <code>20065</code> → <code>4E61</code>).</li>
-    <li>Concatenate all hex strings sequentially to form the working string S.</li>
-  </ol>
-  <h3>Queries (two types)</h3>
+  <p class="pv-meta">Time: 1 sec &nbsp;|&nbsp; Memory: 32 MB</p>
+  <p>You are given an initial mysterious string and q queries.</p>
+  <h4>Initialization</h4>
+  <p>A mysterious string has format <code>d₁|d₂|...|dₘ</code> (decimal integers). Decode it by:<br>
+  1. Converting each dᵢ to uppercase hex with <strong>no zero-padding</strong> (e.g. <code>20065</code> → <code>4E61</code>).<br>
+  2. Concatenating all hex strings to form working string S.</p>
+  <h4>Queries</h4>
   <ul>
-    <li><code>Insert idx str</code> — decode <code>str</code> into hex string S<sub>ins</sub> using the same rules; insert S<sub>ins</sub> into S at position <code>idx</code> (0-indexed, before the character currently there).</li>
-    <li><code>Remove idx len</code> — delete exactly <code>len</code> characters from S starting at <code>idx</code>.</li>
+    <li><code>Insert idx str</code> — decode <code>str</code> the same way; insert the result into S at position <code>idx</code> (0-indexed, before the character currently there).</li>
+    <li><code>Remove idx len</code> — delete <code>len</code> characters from S starting at <code>idx</code>.</li>
   </ul>
-  <p>After all queries, decode the final S into ASCII: every consecutive pair of hex digits → one ASCII character (e.g. <code>4E6F</code> → <code>No</code>).</p>
+  <p>After all queries, decode the final S to ASCII: every consecutive hex pair → one character (e.g. <code>4E6F</code> → <code>No</code>).</p>
   <h3>Input</h3>
-  <p>Line 1: the initial mysterious string.<br>
-  Line 2: integer q (1 ≤ q ≤ 100).<br>
-  Next q lines: queries as described above.</p>
-  <div class="pv-constraint-box">|S| never exceeds 10 000 characters at any point.</div>
+  <p>Line 1: initial mysterious string.<br>
+     Line 2: q (1 ≤ q ≤ 100). Next q lines: queries. |S| ≤ 10 000 at all times.</p>
   <h3>Output</h3>
-  <p>Output the final decoded ASCII string on a single line.</p>
+  <p>Final decoded ASCII string on a single line.</p>
+  <h3>Subtasks</h3>
+  <table class="table table-condensed table-bordered pv-subtask-table">
+    <tr><th>Subtask</th><th>Points</th><th>Constraints</th></tr>
+    <tr><td>1</td><td>15</td><td>q ≤ 5; only Insert; each dᵢ ≤ 255</td></tr>
+    <tr><td>2</td><td>15</td><td>q ≤ 20; only Remove</td></tr>
+    <tr><td>3</td><td>25</td><td>q ≤ 50; both types; each dᵢ ≤ 255 (single byte)</td></tr>
+    <tr><td>4</td><td>25</td><td>q ≤ 100; full constraints; |S| ≤ 5 000</td></tr>
+    <tr><td>5</td><td>20</td><td>q ≤ 100; |S| ≤ 10 000</td></tr>
+  </table>
   <h3>Sample Input</h3>
   <pre>20065|16019311|33981975|40140414
 3
@@ -215,25 +228,33 @@ Insert 7 3616|1175|1056</pre>
   <h3>Sample Output</h3>
   <pre>No~~ It is too hard~~</pre>
   <div class="pv-done-btn">
-    <button class="btn btn-success" onclick="toggle_done('original', 3, 8); this.blur();">Mark as Done</button>
+    <button class="btn btn-success" onclick="toggle_done('original',3,8);this.blur();">Mark as Done</button>
   </div>
 </template>
 
 <template id="prob-4" data-pid="14903" data-title="NEWater">
   <h2>14903 — NEWater</h2>
-  <p class="pv-meta">Time: 1 sec &nbsp;|&nbsp; Memory: 32 MB &nbsp;|&nbsp; 7 subtasks</p>
-  <p>A billboard system stores text as an array of N strings. Each string i has a length value <code>len[i]</code> specifying how many characters are in it. There are <strong>no null terminators</strong>. All strings are initially empty.</p>
-  <p>Process Q queries of these types:</p>
+  <p class="pv-meta">Time: 1 sec &nbsp;|&nbsp; Memory: 32 MB</p>
+  <p>A billboard system stores N strings. Each string i has a length <code>len[i]</code>. There are <strong>no null terminators</strong> — <code>len[i]</code> is the sole indicator of valid content. All strings are initially empty.</p>
+  <h4>Queries</h4>
   <ul>
     <li><code>0 i c</code> — append character <code>c</code> to string i.</li>
     <li><code>1 i s</code> — append string <code>s</code> to string i.</li>
-    <li><code>2</code> — print all non-empty strings in order (index 0 to N−1), one per line.</li>
+    <li><code>2</code> — print all non-empty strings in index order (0 to N−1), one per line.</li>
   </ul>
   <h3>Input</h3>
-  <p>Line 1: two integers N (1 ≤ N ≤ 100) and Q (1 ≤ Q ≤ 1000).<br>
-  Next Q lines: queries as described.</p>
+  <p>Line 1: N (1 ≤ N ≤ 100) and Q (1 ≤ Q ≤ 1 000). Next Q lines: queries.</p>
   <h3>Output</h3>
-  <p>For every type-2 query, print all non-empty strings in index order, each on its own line.</p>
+  <p>For every type-2 query, print all non-empty strings in index order, one per line.</p>
+  <h3>Subtasks</h3>
+  <table class="table table-condensed table-bordered pv-subtask-table">
+    <tr><th>Subtask</th><th>Points</th><th>Constraints</th></tr>
+    <tr><td>1</td><td>15</td><td>N = 1; Q ≤ 20; only type-0 and type-2</td></tr>
+    <tr><td>2</td><td>15</td><td>N ≤ 5; Q ≤ 50; type-1 strings are lowercase only</td></tr>
+    <tr><td>3</td><td>20</td><td>N ≤ 20; Q ≤ 200; at most one type-2 query</td></tr>
+    <tr><td>4</td><td>25</td><td>N ≤ 50; Q ≤ 500; multiple type-2 queries</td></tr>
+    <tr><td>5</td><td>25</td><td>Full constraints</td></tr>
+  </table>
   <h3>Sample Input</h3>
   <pre>3 6
 1 2 6KKPba5qeO
@@ -247,20 +268,29 @@ Insert 7 3616|1175|1056</pre>
 aqnoQc6
 6KKPba5qeOK</pre>
   <div class="pv-done-btn">
-    <button class="btn btn-success" onclick="toggle_done('original', 4, 8); this.blur();">Mark as Done</button>
+    <button class="btn btn-success" onclick="toggle_done('original',4,8);this.blur();">Mark as Done</button>
   </div>
 </template>
 
 <template id="prob-5" data-pid="14904" data-title="Crystalline Spire Energy Harvest">
   <h2>14904 — Crystalline Spire Energy Harvest</h2>
-  <p class="pv-meta">Time: 1 sec &nbsp;|&nbsp; Memory: 128 MB &nbsp;|&nbsp; 7 subtasks</p>
-  <p>There are N spires in a line. Spire i has height H[i] and broadcasts energy V[i] to its immediate neighbours (left: i−1, right: i+1). A neighbour <strong>absorbs</strong> the energy only if it is <strong>strictly taller</strong> than spire i. Energy from multiple broadcasts accumulates.</p>
-  <p>Find the spire that receives the most total absorbed energy. On a tie, output the one with the smaller index (0-indexed).</p>
+  <p class="pv-meta">Time: 1 sec &nbsp;|&nbsp; Memory: 128 MB</p>
+  <p>N spires in a line. Spire i has height H[i] and broadcasts energy V[i] to its immediate neighbours (left: i−1, right: i+1). A neighbour <strong>absorbs</strong> the energy only if it is <strong>strictly taller</strong> than spire i. Energy accumulates.</p>
+  <p>Find the spire receiving the most total energy. On a tie, output the one with the smaller index (0-indexed).</p>
   <h3>Input</h3>
-  <p>Line 1: integer N (1 ≤ N ≤ 5 × 10⁶).<br>
-  Next N lines: H[i] (|H[i]| ≤ 2 × 10⁹) and V[i] (0 ≤ V[i] ≤ 10⁹).</p>
+  <p>Line 1: N (1 ≤ N ≤ 5 × 10⁶).<br>
+     Next N lines: H[i] (|H| ≤ 2×10⁹) and V[i] (0 ≤ V ≤ 10⁹).</p>
   <h3>Output</h3>
-  <p>Two space-separated integers: the 0-indexed spire number and the total energy it receives.</p>
+  <p>Two space-separated integers: the 0-indexed spire number and its total energy.</p>
+  <h3>Subtasks</h3>
+  <table class="table table-condensed table-bordered pv-subtask-table">
+    <tr><th>Subtask</th><th>Points</th><th>Constraints</th></tr>
+    <tr><td>1</td><td>15</td><td>N ≤ 10; all heights distinct and positive</td></tr>
+    <tr><td>2</td><td>15</td><td>N ≤ 1 000; heights distinct</td></tr>
+    <tr><td>3</td><td>20</td><td>N ≤ 10⁵; heights may be equal</td></tr>
+    <tr><td>4</td><td>25</td><td>N ≤ 10⁶; negative heights allowed</td></tr>
+    <tr><td>5</td><td>25</td><td>N ≤ 5 × 10⁶; full constraints, time-tight</td></tr>
+  </table>
   <h3>Sample Input</h3>
   <pre>4
 4 2
@@ -270,33 +300,39 @@ aqnoQc6
   <h3>Sample Output</h3>
   <pre>3 7</pre>
   <div class="pv-done-btn">
-    <button class="btn btn-success" onclick="toggle_done('original', 5, 8); this.blur();">Mark as Done</button>
+    <button class="btn btn-success" onclick="toggle_done('original',5,8);this.blur();">Mark as Done</button>
   </div>
 </template>
 
 <template id="prob-6" data-pid="14905" data-title="Check Checkmate">
   <h2>14905 — Check Checkmate</h2>
-  <p class="pv-meta">Time: 1 sec &nbsp;|&nbsp; Memory: 32 MB &nbsp;|&nbsp; 7 subtasks</p>
+  <p class="pv-meta">Time: 1 sec &nbsp;|&nbsp; Memory: 32 MB</p>
   <p>Fujiwara no Sai is analyzing chess puzzles. Determine if the opponent's King can be captured in <strong>2 moves or fewer</strong>.</p>
-  <p>Standard 8×8 board, columns A–H, rows 1–8. Piece movement rules:</p>
-  <table class="table table-condensed table-bordered" style="max-width:420px;">
+  <p>Standard 8×8 board, columns A–H, rows 1–8.</p>
+  <table class="table table-condensed table-bordered pv-rule-table" style="max-width:440px;">
     <tr><th>Piece</th><th>Movement</th></tr>
     <tr><td>Q (Queen)</td><td>Any number of squares horizontally, vertically, or diagonally</td></tr>
     <tr><td>R (Rook)</td><td>Any number of squares horizontally or vertically</td></tr>
     <tr><td>N (Knight)</td><td>L-shape: 2 + 1 squares</td></tr>
     <tr><td>B (Bishop)</td><td>Any number of squares diagonally</td></tr>
-    <tr><td>P (Pawn)</td><td>Forward one square; captures diagonally; may move two from starting row</td></tr>
+    <tr><td>P (Pawn)</td><td>Forward 1 square; captures diagonally; may move 2 from starting row</td></tr>
     <tr><td>K (King)</td><td>One square in any direction</td></tr>
   </table>
   <h3>Input</h3>
-  <p>Line 1: integer t — test cases.<br>
-  For each test case:<br>
-  &nbsp; Line 1: p — Sai's piece count.<br>
-  &nbsp; Next p lines: piece type and position (e.g. <code>Q H1</code>).<br>
-  &nbsp; Line: o — opponent's piece count.<br>
-  &nbsp; Next o lines: opponent piece type and position.</p>
+  <p>Line 1: t — test cases.<br>
+  For each test case: p (Sai's piece count), next p lines with piece + position; then o (opponent count), next o lines with piece + position.</p>
   <h3>Output</h3>
-  <p>For each test case: if the King can be captured in 1 move, print <code>1</code> then the move; in 2 moves, print <code>2</code> then both moves; otherwise print <code>0</code>. Moves are written as <code>start end</code> (e.g. <code>H1 H8</code>).</p>
+  <p>If capturable in 1 move: print <code>1</code> then the move. In 2 moves: print <code>2</code> then both moves. Otherwise: <code>0</code>.<br>
+  Moves written as <code>start end</code> (e.g. <code>H1 H8</code>).</p>
+  <h3>Subtasks</h3>
+  <table class="table table-condensed table-bordered pv-subtask-table">
+    <tr><th>Subtask</th><th>Points</th><th>Constraints</th></tr>
+    <tr><td>1</td><td>15</td><td>t ≤ 3; capturable in 1 move; only Queens and Rooks</td></tr>
+    <tr><td>2</td><td>20</td><td>t ≤ 5; 1-move capture; all piece types</td></tr>
+    <tr><td>3</td><td>20</td><td>t ≤ 5; exactly 2 moves required; no blocking pieces</td></tr>
+    <tr><td>4</td><td>25</td><td>t ≤ 10; 2-move capture; opponent has blocking pieces</td></tr>
+    <tr><td>5</td><td>20</td><td>t ≤ 20; full constraints; may output 0</td></tr>
+  </table>
   <h3>Sample Input</h3>
   <pre>2
 8
@@ -322,29 +358,38 @@ H1 H8
 G6 H6
 H6 H8</pre>
   <div class="pv-done-btn">
-    <button class="btn btn-success" onclick="toggle_done('original', 6, 8); this.blur();">Mark as Done</button>
+    <button class="btn btn-success" onclick="toggle_done('original',6,8);this.blur();">Mark as Done</button>
   </div>
 </template>
 
 <template id="prob-7" data-pid="14906" data-title="Magical Evaluation">
   <h2>14906 — Magical Evaluation</h2>
-  <p class="pv-meta">Time: 1 sec &nbsp;|&nbsp; Memory: 32 MB &nbsp;|&nbsp; 7 subtasks &nbsp;|&nbsp; Partial Judge</p>
-  <p>n mages are undergoing the First-Class Mage Exam. Each mage has a name and a mana value (−99 to 99). You receive q queries; each specifies a sorting rule. Sort all mages by that rule and output their names.</p>
+  <p class="pv-meta">Time: 1 sec &nbsp;|&nbsp; Memory: 32 MB</p>
+  <p>n mages are taking the First-Class Mage Exam. Each has a name and a mana value (−99 to 99). For each of q queries, sort all mages by the specified rule and print their names.</p>
   <h3>Sorting Rules</h3>
-  <table class="table table-condensed table-bordered">
+  <table class="table table-condensed table-bordered pv-rule-table">
     <tr><th>Rule</th><th>Sort key</th><th>Tiebreaker</th></tr>
-    <tr><td>0</td><td><code>value</code> ascending</td><td>Name lexicographically ascending</td></tr>
-    <tr><td>1</td><td><code>value²</code> ascending</td><td>Name lexicographically ascending</td></tr>
-    <tr><td>2</td><td>Digit sum of <code>|value|</code> ascending (e.g. −85 → 8+5=13)</td><td>Name lex. ascending</td></tr>
-    <tr><td>3</td><td>Swap tens and units digits of value, preserve sign, sort ascending (e.g. 78→87, −6→−60, 10→1)</td><td>Name lex. ascending</td></tr>
-    <tr><td>4</td><td>Prime |value| first (ascending by original value), non-prime after (also ascending)</td><td>Name lex. ascending</td></tr>
+    <tr><td>0</td><td><code>value</code> ascending</td><td>Name lex. ascending</td></tr>
+    <tr><td>1</td><td><code>value²</code> ascending</td><td>Name lex. ascending</td></tr>
+    <tr><td>2</td><td>Digit sum of |value| ascending (e.g. −85 → 8+5=13)</td><td>Name lex. ascending</td></tr>
+    <tr><td>3</td><td>Swap tens &amp; units digits, preserve sign, ascending (e.g. 78→87, −6→−60, 10→1)</td><td>Name lex. ascending</td></tr>
+    <tr><td>4</td><td>Prime |value| first (asc by original), non-prime after (asc)</td><td>Name lex. ascending</td></tr>
   </table>
   <h3>Input</h3>
   <p>Line 1: n and q (1 ≤ n, q ≤ 100).<br>
-  Next n lines: <code>name</code> (≤ 30 chars) and <code>value</code>.<br>
-  Next q lines: a rule number (0–4).</p>
+     Next n lines: <code>name</code> (≤ 30 chars) and <code>value</code>.<br>
+     Next q lines: a rule number (0–4).</p>
   <h3>Output</h3>
-  <p>For each query, output sorted names one per line, followed by a blank line.</p>
+  <p>For each query, sorted names one per line, followed by a blank line.</p>
+  <h3>Subtasks</h3>
+  <table class="table table-condensed table-bordered pv-subtask-table">
+    <tr><th>Subtask</th><th>Points</th><th>Constraints</th></tr>
+    <tr><td>1</td><td>20</td><td>n, q ≤ 10; only Rule 0</td></tr>
+    <tr><td>2</td><td>20</td><td>n, q ≤ 30; Rules 0–1; no ties</td></tr>
+    <tr><td>3</td><td>20</td><td>n, q ≤ 50; Rules 0–2; ties possible</td></tr>
+    <tr><td>4</td><td>20</td><td>n, q ≤ 100; Rules 0–3</td></tr>
+    <tr><td>5</td><td>20</td><td>n, q ≤ 100; all Rules 0–4</td></tr>
+  </table>
   <h3>Sample Input</h3>
   <pre>7 5
 Frieren 7
@@ -367,17 +412,48 @@ Denken
 Frieren
 Wirbel
 Kanne
-(... outputs for rules 1–4 follow)</pre>
+
+Land
+Ubel
+Denken
+Frieren
+Fern
+Wirbel
+Kanne
+
+Ubel
+Denken
+Frieren
+Fern
+Wirbel
+Kanne
+Land
+
+Ubel
+Denken
+Kanne
+Frieren
+Fern
+Wirbel
+Land
+
+Ubel
+Denken
+Fern
+Frieren
+Wirbel
+Kanne
+Land</pre>
   <div class="pv-done-btn">
-    <button class="btn btn-success" onclick="toggle_done('original', 7, 8); this.blur();">Mark as Done</button>
+    <button class="btn btn-success" onclick="toggle_done('original',7,8);this.blur();">Mark as Done</button>
   </div>
 </template>
 
-<!-- Page layout -->
+<!-- ===================== PAGE LAYOUT ===================== -->
 <div class="pv-layout">
   <div id="pv-sidebar"></div>
-  <div id="pv-content" style="padding:24px 32px; flex:1; overflow-y:auto;">
-    <p class="text-muted" style="margin-top:40px; text-align:center;">Loading…</p>
+  <div id="pv-content" style="padding:24px 32px;flex:1;overflow-y:auto;">
+    <p class="text-muted" style="margin-top:40px;text-align:center;">Loading…</p>
   </div>
 </div>
 
@@ -388,11 +464,8 @@ Kanne
   }).catch(function(e) {
     document.getElementById('pv-content').innerHTML =
       '<div class="alert alert-danger"><strong>WASM failed to load.</strong> ' +
-      'Serve this directory over HTTP (e.g. <code>python3 -m http.server 8080</code>) ' +
-      'and open <a href="http://localhost:8080/problems_original.html">http://localhost:8080/problems_original.html</a>.</div>';
+      'Serve over HTTP: <code>python3 -m http.server 8080</code></div>';
   });
-
-  // Global wrappers so onclick= attributes work
   function navigate_to(idx) { wasm_bindgen.navigate_to(idx); }
   function toggle_done(page, idx, n) { wasm_bindgen.toggle_done(page, idx, n); }
   function clear_progress(page, n) { wasm_bindgen.clear_progress(page, n); }
