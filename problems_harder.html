@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Practice Problems — Hard Edition</title>
+  <link rel="stylesheet" href="./3315 - I2P(II)2026_Kuo_Midterm1_Practice_files/bootstrap.min.css">
+  <script src="./3315 - I2P(II)2026_Kuo_Midterm1_Practice_files/jquery.min.js"></script>
+  <style>
+    body { background: #f5f5f5; }
+    .pv-layout { display: flex; gap: 0; min-height: calc(100vh - 56px); }
+    #pv-sidebar {
+      width: 260px; min-width: 220px; max-width: 300px;
+      background: #fff; border-right: 1px solid #ddd;
+      padding: 16px 12px; position: sticky; top: 56px;
+      height: calc(100vh - 56px); overflow-y: auto;
+    }
+    #pv-content {
+      flex: 1; padding: 24px 32px; overflow-y: auto;
+      max-width: 860px;
+    }
+    .pv-sidebar-header h4 { font-weight: 600; color: #c0392b; }
+    .pv-stats-row { margin-bottom: 6px; }
+    .pv-progress { height: 8px; margin-bottom: 12px; border-radius: 4px; }
+    .pv-prob-btn {
+      text-align: left !important; white-space: normal;
+      margin-bottom: 4px; font-size: 13px;
+      border-radius: 4px !important;
+    }
+    .pv-prob-btn.active { background: #c0392b !important; color: #fff !important;
+      border-color: #962d22 !important; }
+    .pv-prob-btn .badge { background: #5cb85c; }
+    #pv-content h2 { margin-top: 0; color: #7b241c; border-bottom: 2px solid #ddd; padding-bottom: 8px; }
+    #pv-content h3 { color: #c0392b; margin-top: 20px; }
+    #pv-content pre {
+      background: #1e1e1e; color: #d4d4d4;
+      border-radius: 6px; padding: 14px 18px;
+      font-family: "Consolas", "Cascadia Code", monospace;
+      font-size: 13px; overflow-x: auto;
+    }
+    #pv-content table { margin-bottom: 12px; }
+    #pv-content .pv-done-btn { margin-top: 20px; }
+    .pv-meta { color: #888; font-size: 12px; margin-bottom: 16px; }
+    .pv-constraint-box {
+      background: #fce4ec; border-left: 4px solid #e53935;
+      padding: 10px 14px; border-radius: 4px; margin-bottom: 12px;
+    }
+    .badge-hard {
+      background: #c0392b; color: #fff; font-size: 10px;
+      padding: 2px 6px; border-radius: 3px; vertical-align: middle; margin-left: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-inverse" style="margin-bottom:0;">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="index.html">I2P(II) Midterm Practice</a>
+    </div>
+    <ul class="nav navbar-nav">
+      <li><a href="problems_original.html">Original</a></li>
+      <li class="active"><a href="problems_harder.html">Hard Edition</a></li>
+      <li><a href="index.html">Solutions</a></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="#" style="color:#e57373;font-size:12px;padding-top:18px;">8 problems &nbsp; &#9760;</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Problem templates -->
+
+<template id="prob-0" data-pid="H-1" data-title="GCD+">
+  <h2>GCD+ <span class="badge-hard">HARD</span></h2>
+  <p class="pv-meta">Time: 2 sec &nbsp;|&nbsp; Memory: 64 MB</p>
+  <p>You are given T test cases. In each test case you receive K positive integers. Compute both the <strong>GCD</strong> (greatest common divisor) and the <strong>LCM</strong> (least common multiple) of all K numbers.</p>
+  <h3>Input</h3>
+  <p>Line 1: integer T (1 ≤ T ≤ 100 000) — number of test cases.<br>
+  Each test case occupies one line: first an integer K (2 ≤ K ≤ 20), followed by K positive integers each up to 10<sup>18</sup>.</p>
+  <h3>Output</h3>
+  <p>For each test case, output two space-separated integers on one line: the GCD and the LCM of all K numbers.<br>
+  If the LCM exceeds 10<sup>18</sup>, output <code>overflow</code> in place of the LCM value.</p>
+  <h3>Sample Input</h3>
+  <pre>3
+2 2 4
+3 6 9 12
+4 12 15 20 30</pre>
+  <h3>Sample Output</h3>
+  <pre>2 4
+3 36
+1 60</pre>
+  <div class="pv-done-btn">
+    <button class="btn btn-danger" onclick="toggle_done('harder', 0, 8); this.blur();">Mark as Done</button>
+  </div>
+</template>
+
+<template id="prob-1" data-pid="H-2" data-title="Table Management ver.3">
+  <h2>Table Management System ver.3 <span class="badge-hard">HARD</span></h2>
+  <p class="pv-meta">Time: 1 sec &nbsp;|&nbsp; Memory: 512 MB &nbsp;|&nbsp; Partial Judge</p>
+  <p>Same restaurant as before — but now guests who cannot be immediately seated join a <strong>FIFO waitlist</strong>. Each time a table frees up, the system immediately tries to seat the front of the waitlist. Guests may also <strong>cancel</strong> their wait before being seated.</p>
+  <p>Implement in <code>function.h</code>:</p>
+  <ul>
+    <li><code>Table* createTable()</code> — same as ver.2.</li>
+    <li><code>Guest* createGuest()</code> — now also reads <code>cancel_time</code> per guest (the minute they cancel, or <code>-1</code> if they won't).</li>
+    <li><code>Guest* checkLeave(...)</code> — same semantics.</li>
+    <li><code>int assignTable(...)</code> — same semantics.</li>
+    <li><code>void processWaitlist(Table* tables, int tableCount, Queue* waitlist, int currentTime)</code> — repeatedly try to seat the front-of-queue guest while a suitable table exists. Skip (remove) guests who have already cancelled.</li>
+  </ul>
+  <h3>Input</h3>
+  <p>Line 1: N (1 ≤ N ≤ 50) — tables.<br>
+  Line 2: N capacities x<sub>i</sub> (1 ≤ x<sub>i</sub> ≤ 4).<br>
+  Line 3: M (1 ≤ M ≤ 200) — guests.<br>
+  Next M lines: <code>name</code> (≤ 10 chars), <code>group_size</code>, <code>arrival_time</code>, <code>dining_time</code>, <code>cancel_time</code> (or <code>-1</code>). Arrivals are non-decreasing.</p>
+  <h3>Output</h3>
+  <p>Same format as ver.2, with these additions:<br>
+  On waitlist seating: <code>hh:mm (min) -&gt; name: enter (from waitlist)</code><br>
+  On cancellation: <code>hh:mm (min) -&gt; name: cancel</code></p>
+  <h3>Sample Input</h3>
+  <pre>2
+2 2
+4
+Alice 2 700 120 -1
+Bob 2 710 60 -1
+Carol 2 720 30 780
+Dave 2 730 60 -1</pre>
+  <h3>Sample Output</h3>
+  <pre>11:00 (660) -> table: |||
+11:40 (700) -> Alice: enter
+11:50 (710) -> Bob: enter
+12:00 (720) -> table: |Alice(100min)|Bob(50min)|
+13:00 (780) -> Bob: leave
+13:00 (780) -> Carol: cancel
+13:00 (780) -> Dave: enter (from waitlist)
+13:00 (780) -> table: |Alice(40min)|Dave(50min)|
+14:00 (840) -> Alice: leave
+14:00 (840) -> Dave: leave
+15:00 (900) -> table: |||</pre>
+  <div class="pv-done-btn">
+    <button class="btn btn-danger" onclick="toggle_done('harder', 1, 8); this.blur();">Mark as Done</button>
+  </div>
+</template>
+
+<template id="prob-2" data-pid="H-3" data-title="Neural Link Node Repair II">
+  <h2>Neural Link Node Repair II <span class="badge-hard">HARD</span></h2>
+  <p class="pv-meta">Time: 1 sec &nbsp;|&nbsp; Memory: 32 MB</p>
+  <p>Same as the original, but now each node is a <strong>64-bit unsigned integer</strong>, and there are <strong>four</strong> rules.</p>
+  <h3>Rule 1 — Overload Detection</h3>
+  <p>If <code>S &amp; (S &gt;&gt; 1) != 0</code>, output <code>0xFFFFFFFFFFFFFFFF</code> and skip remaining rules.</p>
+  <h3>Rule 2 — Neural Bridging</h3>
+  <p>Fill all bits between MSB and LSB (inclusive) with 1s. If S = 0, output <code>0x0000000000000000</code> and skip Rules 3 and 4.</p>
+  <h3>Rule 3 — Checksum Integration</h3>
+  <p>XOR all <strong>eight</strong> bytes of <code>bridge</code> to produce a checksum byte. Replace the lowest byte of <code>bridge</code> with this checksum.</p>
+  <h3>Rule 4 — Rotation</h3>
+  <p>Count the number of set bits (popcount) in the Rule 3 result. Rotate the result <strong>right</strong> by that many positions (64-bit rotation).</p>
+  <h3>Input</h3>
+  <p>Line 1: integer T — test cases.<br>
+  Next T lines: a 64-bit unsigned integer in either <strong>decimal</strong> or <strong><code>0x</code>-prefixed hexadecimal</strong>. You must handle both.</p>
+  <h3>Output</h3>
+  <p>For each test case, output a zero-padded 16-digit uppercase hex value with <code>0x</code> prefix (e.g. <code>0x0000000000000001</code>).</p>
+  <h3>Sample Input</h3>
+  <pre>4
+0x0000000000000003
+0x0000000000000000
+512
+0x0800000000000002</pre>
+  <h3>Sample Output</h3>
+  <pre>0xFFFFFFFFFFFFFFFF
+0x0000000000000000
+0x0000000000000200
+0x01FFFFFFFFFFFFFF</pre>
+  <div class="pv-done-btn">
+    <button class="btn btn-danger" onclick="toggle_done('harder', 2, 8); this.blur();">Mark as Done</button>
+  </div>
+</template>
+
+<template id="prob-3" data-pid="H-4" data-title="It Is Not Simple">
+  <h2>It Is Not Simple <span class="badge-hard">HARD</span></h2>
+  <p class="pv-meta">Time: 2 sec &nbsp;|&nbsp; Memory: 64 MB</p>
+  <p>Same mysterious string format and working string S as the original, but with <strong>four</strong> query types.</p>
+  <h3>Queries</h3>
+  <ul>
+    <li><code>Insert idx str</code> — decode <code>str</code> into hex and insert into S at position <code>idx</code>.</li>
+    <li><code>Remove idx len</code> — delete <code>len</code> characters from S starting at <code>idx</code>.</li>
+    <li><code>Reverse idx1 idx2</code> — reverse the substring of S from <code>idx1</code> to <code>idx2</code> (inclusive).</li>
+    <li><code>Replace old new</code> — replace every non-overlapping occurrence of hex substring <code>old</code> with <code>new</code>, left-to-right. <code>old</code> and <code>new</code> are plain hex strings (not mysterious format). <code>new</code> may be empty.</li>
+  </ul>
+  <p>After all queries, decode S into ASCII as before.</p>
+  <h3>Input</h3>
+  <p>Line 1: initial mysterious string.<br>
+  Line 2: q (1 ≤ q ≤ 1000).<br>
+  Next q lines: queries.</p>
+  <div class="pv-constraint-box">|S| never exceeds 100 000 characters at any point.</div>
+  <h3>Output</h3>
+  <p>The final decoded ASCII string on a single line.</p>
+  <h3>Sample Input</h3>
+  <pre>20065|16019311|33981975|40140414
+4
+Insert 6 13183871|30367|126|30359|204916
+Remove 3 12
+Replace 7E 7E7E
+Insert 7 3616|1175|1056</pre>
+  <h3>Sample Output</h3>
+  <pre>No~~~~ It is too hard~~~~</pre>
+  <div class="pv-done-btn">
+    <button class="btn btn-danger" onclick="toggle_done('harder', 3, 8); this.blur();">Mark as Done</button>
+  </div>
+</template>
+
+<template id="prob-4" data-pid="H-5" data-title="NEWater II">
+  <h2>NEWater II <span class="badge-hard">HARD</span></h2>
+  <p class="pv-meta">Time: 2 sec &nbsp;|&nbsp; Memory: 128 MB</p>
+  <p>Same billboard string array as the original, but with three additional operations. No null terminators; <code>len[i]</code> is authoritative. All strings initially empty.</p>
+  <h3>Queries</h3>
+  <ul>
+    <li><code>0 i c</code> — append character <code>c</code> to string i.</li>
+    <li><code>1 i s</code> — append string <code>s</code> to string i.</li>
+    <li><code>2</code> — print all non-empty strings in index order, one per line.</li>
+    <li><code>3 i j</code> — swap strings i and j (including their lengths).</li>
+    <li><code>4 i k</code> — delete the first k characters of string i. If k ≥ len[i], the string becomes empty.</li>
+    <li><code>5 i j s</code> — insert string <code>s</code> into string i at position j (0-indexed, before character j). If j = len[i], this is equivalent to appending.</li>
+  </ul>
+  <h3>Input</h3>
+  <p>Line 1: N (1 ≤ N ≤ 1 000) and Q (1 ≤ Q ≤ 10 000).<br>
+  Next Q lines: queries.</p>
+  <div class="pv-constraint-box">Total characters across all strings ≤ 10⁶ at all times. All indices are valid.</div>
+  <h3>Sample Input</h3>
+  <pre>3 9
+1 2 6KKPba5qeO
+0 2 K
+1 1 aqnoQc
+0 1 6
+0 0 a
+3 0 2
+4 1 3
+5 0 1 XY
+2</pre>
+  <h3>Sample Output</h3>
+  <pre>aXY
+noQc6
+a6KKPba5qeOK</pre>
+  <div class="pv-done-btn">
+    <button class="btn btn-danger" onclick="toggle_done('harder', 4, 8); this.blur();">Mark as Done</button>
+  </div>
+</template>
+
+<template id="prob-5" data-pid="H-6" data-title="Crystalline Spire Energy Harvest II">
+  <h2>Crystalline Spire Energy Harvest II <span class="badge-hard">HARD</span></h2>
+  <p class="pv-meta">Time: 3 sec &nbsp;|&nbsp; Memory: 256 MB</p>
+  <p>Now there is an N × M <strong>2D grid</strong> of spires. Each cell (r, c) broadcasts energy V[r][c] to its four immediate neighbours (up, down, left, right). A neighbour absorbs only if it is <strong>strictly taller</strong>. Energy accumulates from multiple broadcasts.</p>
+  <p>You receive Q queries. Each query gives a cell (r, c) and a new height H′. The cell's height is <strong>toggled</strong>: if it was previously modified it reverts to its original height; otherwise it changes to H′. After each toggle, output the cell (in row-major order, index = r × M + c) receiving maximum total absorbed energy and the amount. On a tie, output the smaller row-major index.</p>
+  <h3>Input</h3>
+  <p>Line 1: N, M (1 ≤ N, M ≤ 1 000) and Q (1 ≤ Q ≤ 10 000).<br>
+  Next N lines: each contains M pairs H[r][c] (|H| ≤ 2×10⁹) and V[r][c] (0 ≤ V ≤ 10⁹), space-separated.<br>
+  Next Q lines: three integers r, c, H′ — toggle the height of cell (r, c).</p>
+  <h3>Output</h3>
+  <p>For each query, output two space-separated values: the row-major index of the maximum-energy cell and its total energy.</p>
+  <h3>Sample Input</h3>
+  <pre>2 2 2
+4 2 3 5
+6 7 8 4
+0 1 10
+0 1 10</pre>
+  <h3>Sample Output</h3>
+  <pre>2 9
+3 7</pre>
+  <div class="pv-done-btn">
+    <button class="btn btn-danger" onclick="toggle_done('harder', 5, 8); this.blur();">Mark as Done</button>
+  </div>
+</template>
+
+<template id="prob-6" data-pid="H-7" data-title="Check Checkmate II">
+  <h2>Check Checkmate II <span class="badge-hard">HARD</span></h2>
+  <p class="pv-meta">Time: 3 sec &nbsp;|&nbsp; Memory: 64 MB</p>
+  <p>Same chess setup as the original, but now find if the King can be captured in <strong>3 moves or fewer</strong>. A Pawn that reaches the last row is <strong>immediately promoted to a Queen</strong> before the sequence continues.</p>
+  <p>Find the <strong>minimum</strong> number of moves needed. Output <strong>all distinct move sequences</strong> of that minimum length, sorted <strong>lexicographically</strong> by the sequence (each move written as <code>startPos endPos</code>, compared character by character). If the King cannot be captured in 3 moves or fewer, output <code>0</code>.</p>
+  <h3>Input</h3>
+  <p>Same format as the original.</p>
+  <h3>Output</h3>
+  <p>Line 1: minimum number of moves n (or <code>0</code> if impossible).<br>
+  If n &gt; 0: all distinct shortest sequences, one per block of n lines. Separate sequences with a blank line. Sort sequences lexicographically.</p>
+  <h3>Sample Input</h3>
+  <pre>1
+2
+Q G6
+K G7
+1
+K H8</pre>
+  <h3>Sample Output</h3>
+  <pre>2
+G6 H6
+H6 H8</pre>
+  <div class="pv-done-btn">
+    <button class="btn btn-danger" onclick="toggle_done('harder', 6, 8); this.blur();">Mark as Done</button>
+  </div>
+</template>
+
+<template id="prob-7" data-pid="H-8" data-title="Magical Evaluation II">
+  <h2>Magical Evaluation II <span class="badge-hard">HARD</span></h2>
+  <p class="pv-meta">Time: 2 sec &nbsp;|&nbsp; Memory: 64 MB</p>
+  <p>Same mage exam as the original, but with 8 sorting rules and <strong>dynamic add/remove</strong> queries.</p>
+  <h3>Sorting Rules (0–7)</h3>
+  <table class="table table-condensed table-bordered">
+    <tr><th>Rule</th><th>Sort key</th><th>Tiebreaker</th></tr>
+    <tr><td>0</td><td><code>value</code> ascending</td><td>Name lex. ascending</td></tr>
+    <tr><td>1</td><td><code>value²</code> ascending</td><td>Name lex. ascending</td></tr>
+    <tr><td>2</td><td>Digit sum of |value| ascending</td><td>Name lex. ascending</td></tr>
+    <tr><td>3</td><td>Swap tens+units digits, preserve sign, ascending</td><td>Name lex. ascending</td></tr>
+    <tr><td>4</td><td>Prime |value| first (asc by original), non-prime after (asc)</td><td>Name lex. ascending</td></tr>
+    <tr><td>5</td><td>Number of <em>distinct</em> prime factors of |value| ascending (0 and 1 have 0 prime factors)</td><td>Name lex. ascending</td></tr>
+    <tr><td>6</td><td>Sum of all positive divisors of |value| ascending (0 → sum 0; 1 → sum 1)</td><td>Name lex. ascending</td></tr>
+    <tr><td>7</td><td>Length of longest non-decreasing subsequence of binary representation of |value|, <em>descending</em></td><td>Name lex. ascending</td></tr>
+  </table>
+  <h3>Query types</h3>
+  <ul>
+    <li><code>S rule</code> — sort by rule (0–7) and print all names, one per line, followed by a blank line.</li>
+    <li><code>A name value</code> — add a new mage with the given name and value to the roster.</li>
+    <li><code>D name</code> — remove the mage with the given name from the roster.</li>
+  </ul>
+  <h3>Input</h3>
+  <p>Line 1: n (1 ≤ n ≤ 1 000) and q (1 ≤ q ≤ 1 000).<br>
+  Next n lines: <code>name</code> (≤ 30 chars) and <code>value</code> (−99 to 99).<br>
+  Next q lines: queries.</p>
+  <h3>Sample Input</h3>
+  <pre>3 5
+Frieren 7
+Fern -7
+Denken 1
+S 0
+A Ubel 0
+S 4
+D Frieren
+S 1</pre>
+  <h3>Sample Output</h3>
+  <pre>Fern
+Denken
+Frieren
+
+Ubel
+Denken
+Fern
+Frieren
+
+Ubel
+Denken
+Fern
+</pre>
+  <div class="pv-done-btn">
+    <button class="btn btn-danger" onclick="toggle_done('harder', 7, 8); this.blur();">Mark as Done</button>
+  </div>
+</template>
+
+<!-- Page layout -->
+<div class="pv-layout">
+  <div id="pv-sidebar"></div>
+  <div id="pv-content" style="padding:24px 32px; flex:1; overflow-y:auto;">
+    <p class="text-muted" style="margin-top:40px; text-align:center;">Loading…</p>
+  </div>
+</div>
+
+<script src="./pkg/problem_viewer.js"></script>
+<script>
+  wasm_bindgen('./pkg/problem_viewer_bg.wasm').then(function() {
+    wasm_bindgen.init_viewer('harder', 8);
+  }).catch(function(e) {
+    document.getElementById('pv-content').innerHTML =
+      '<div class="alert alert-danger"><strong>WASM failed to load.</strong> ' +
+      'Serve this directory over HTTP (e.g. <code>python3 -m http.server 8080</code>) ' +
+      'and open <a href="http://localhost:8080/problems_harder.html">http://localhost:8080/problems_harder.html</a>.</div>';
+  });
+
+  function navigate_to(idx) { wasm_bindgen.navigate_to(idx); }
+  function toggle_done(page, idx, n) { wasm_bindgen.toggle_done(page, idx, n); }
+  function clear_progress(page, n) { wasm_bindgen.clear_progress(page, n); }
+</script>
+</body>
+</html>
